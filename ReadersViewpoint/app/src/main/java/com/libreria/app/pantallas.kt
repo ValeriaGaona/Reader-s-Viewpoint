@@ -1,4 +1,4 @@
-package mx.edu.utng.vgg.readersviewpoint
+package com.libreria.app
 
 // Proyecto Kotlin/Android Jetpack Compose
 // Archivo principal: LibreriaApp.kt

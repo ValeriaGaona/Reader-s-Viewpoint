@@ -5,13 +5,13 @@ plugins {
 }
 
 android {
-    namespace = "mx.edu.utng.vgg.readersviewpoint"
+    namespace = "com.libreria.app"
     compileSdk {
         version = release(36)
     }
 
     defaultConfig {
-        applicationId = "mx.edu.utng.vgg.readersviewpoint"
+        applicationId = "com.libreria.app"
         minSdk = 24
         targetSdk = 36
         versionCode = 1
