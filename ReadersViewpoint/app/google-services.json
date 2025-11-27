@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "585817450152",
+    "project_id": "readersviewpoint-524e8",
+    "storage_bucket": "readersviewpoint-524e8.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:585817450152:android:54483220cc1591cd63449d",
+        "android_client_info": {
+          "package_name": "com.libreria.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAFhDsMLqwMA11hr0O1Bk-1d3EeUTWhcW4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

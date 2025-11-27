@@ -47,11 +47,12 @@ class FirebaseService(
         movCol.document(m.id).set(m).await()
     }
     suspend fun fetchMovimientos(): List<Movimiento> {
-        val snap = movCol.orderBy("dateIso", com.google.firebase.firestore.Query.Direction.DESC).get().await()
+        // CORRECCIÓN: Usar DESCENDING, que es la constante correcta.
+        val snap = movCol.orderBy("dateIso", com.google.firebase.firestore.Query.Direction.DESCENDING).get().await()
         return snap.documents.mapNotNull { it.toObject(Movimiento::class.java) }
     }
     // Admin: create account (client-side createUserWithEmailAndPassword)
-    suspend fun adminCreateAccount(email: String, password: String, displayName: String, role: String): String {
+    suspend fun createAccount(email: String, password: String, displayName: String, role: String): String {
         val result = auth.createUserWithEmailAndPassword(email, password).await()
         val uid = result.user?.uid ?: throw Exception("No uid")
         val profile = UserProfile(uid = uid, email = email, displayName = displayName, role = role)

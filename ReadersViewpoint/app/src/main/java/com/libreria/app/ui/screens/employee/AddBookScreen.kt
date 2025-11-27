@@ -6,6 +6,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.libreria.app.vm.InventoryViewModel
+
 @Composable
 fun AddBookScreen(vm: InventoryViewModel, creatorId: String, creatorName: String, onDone: () -> Unit) {
     var title by remember { mutableStateOf("") }
@@ -13,16 +14,37 @@ fun AddBookScreen(vm: InventoryViewModel, creatorId: String, creatorName: String
     var category by remember { mutableStateOf("") }
     var synopsis by remember { mutableStateOf("") }
     var price by remember { mutableStateOf("") }
+
+    // Asumiendo que quieres stock inicial en 0 o puedes permitir entrada
+    val initialQuantity = 0
+
     Column(Modifier.fillMaxSize().padding(16.dp)) {
         Text("Agregar Libro", style = MaterialTheme.typography.headlineMedium)
-        OutlinedTextField(value = title, onValueChange = { title = it }, label = { Text("Título") })
-        OutlinedTextField(value = author, onValueChange = { author = it }, label = { Text("Autor") })
-        OutlinedTextField(value = category, onValueChange = { category = it }, label = { Text("Categoría") })
-        OutlinedTextField(value = synopsis, onValueChange = { synopsis = it }, label = { Text("Sinopsis") })
-        OutlinedTextField(value = price, onValueChange = { price = it }, label = { Text("Precio") })
+
+        // Agregar modificador fillMaxWidth para que los TextField ocupen todo el ancho (mejor práctica)
+        OutlinedTextField(value = title, onValueChange = { title = it }, label = { Text("Título") }, modifier = Modifier.fillMaxWidth())
+        OutlinedTextField(value = author, onValueChange = { author = it }, label = { Text("Autor") }, modifier = Modifier.fillMaxWidth())
+        OutlinedTextField(value = category, onValueChange = { category = it }, label = { Text("Categoría") }, modifier = Modifier.fillMaxWidth())
+        OutlinedTextField(value = synopsis, onValueChange = { synopsis = it }, label = { Text("Sinopsis") }, modifier = Modifier.fillMaxWidth())
+        OutlinedTextField(value = price, onValueChange = { price = it }, label = { Text("Precio") }, modifier = Modifier.fillMaxWidth())
+
         Spacer(Modifier.height(12.dp))
+
         Button(onClick = {
-            vm.addNewBook(title = title, author = author, category = category, synopsis = synopsis, price = price.toDou onDone()
-        }) { Text("Crear libro (stock 0)") }
+            // CORRECCIÓN: Completar .toDouble() y agregar parámetros faltantes
+            vm.addNewBook(
+                title = title,
+                author = author,
+                category = category,
+                synopsis = synopsis,
+                price = price.toDouble(), // <-- .toDouble() completo
+                creatorId = creatorId, // <-- Parámetro Faltante
+                creatorName = creatorName, // <-- Parámetro Faltante
+                quantity = initialQuantity // <-- Parámetro Faltante (Stock 0)
+            ) // <-- Cierre correcto de vm.addNewBook
+            onDone()
+        }, modifier = Modifier.fillMaxWidth()) {
+            Text("Crear libro (stock $initialQuantity)")
+        }
     }
 }

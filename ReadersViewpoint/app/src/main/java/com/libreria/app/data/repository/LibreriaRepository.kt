@@ -13,4 +13,5 @@ class LibreriaRepository(private val firebase: FirebaseService) {
     suspend fun getMovements(): List<Movimiento> = firebase.fetchMovimientos()
     suspend fun getUserProfile(uid: String): UserProfile? = firebase.getUserProfile(uid)
     suspend fun createAccount(email: String, password: String, name: String, role: String) =
+        firebase.createAccount(email, password, name, role)
 }
