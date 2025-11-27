@@ -15,3 +15,28 @@ class LibreriaRepository(private val firebase: FirebaseService) {
     suspend fun createAccount(email: String, password: String, name: String, role: String) =
         firebase.createAccount(email, password, name, role)
 }
+
+//package com.libreria.app.data.repository
+//
+//import android.content.Context // 🚨 Necesario
+//import com.libreria.app.data.local.LibreriaDatabase // Asume que tienes esto
+//import com.libreria.app.data.remote.FirebaseService
+//
+//class LibreriaRepository(
+//    context: Context, // 👈 AHORA ACEPTA EL CONTEXTO
+//    private val firebase: FirebaseService
+//) {
+//    // Inicialización de ROOM usando el Contexto
+//    private val db = LibreriaDatabase.getDatabase(context) // Asume que tienes un patrón Singleton para Room
+//    private val libroDao = db.libroDao()
+//    private val movimientoDao = db.movimientoDao()
+//
+//    // ... (El resto de tus funciones de repositorio)
+//
+//    // Ejemplo de cómo obtendrías los libros (Room)
+//    suspend fun getAllBooks() = libroDao.getAll()
+//
+//    // Ejemplo de Firebase (Firestore)
+//    suspend fun getBookById(id: String) = firebase.getBookById(id)
+//
+//}
