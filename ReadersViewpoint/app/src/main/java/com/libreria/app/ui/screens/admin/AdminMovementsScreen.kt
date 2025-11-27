@@ -3,21 +3,45 @@ package com.libreria.app.ui.screens.admin
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.libreria.app.data.model.Movimiento
 import com.libreria.app.vm.InventoryViewModel
 
 @Composable
-fun AdminMovementsScreen(vmInventory: InventoryViewModel) {
+fun AdminMovementsScreen(
+    vmInventory: InventoryViewModel,
+    onClose: () -> Unit // ✅ HANDLER AÑADIDO
+) {
     val movements by vmInventory.movements.collectAsState()
 
     Column(Modifier.fillMaxSize().padding(12.dp)) {
-        Text("Movimientos (Administrador)", style = MaterialTheme.typography.headlineMedium)
+
+        // --- Encabezado con botón de cierre ---
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text("Movimientos (Administrador)", style = MaterialTheme.typography.headlineMedium)
+
+            // Botón de cierre
+            IconButton(onClick = onClose) {
+                Icon(
+                    imageVector = Icons.Default.Close,
+                    contentDescription = "Cerrar movimientos"
+                )
+            }
+        }
+
         Spacer(Modifier.height(8.dp))
 
+        // --- Lista de Movimientos ---
         LazyColumn {
             items(movements) { mov ->
                 Card(Modifier.fillMaxWidth().padding(6.dp)) {
@@ -26,15 +50,13 @@ fun AdminMovementsScreen(vmInventory: InventoryViewModel) {
                             text = "[${mov.dateIso}] ${mov.action} - ${mov.bookTitle}",
                             style = MaterialTheme.typography.titleMedium
                         )
-
-                        // CORRECCIÓN 1: Se completa la interpolación de cadena con mov.quantity y se cierra el paréntesis
                         Text(
                             text = "Empleado: ${mov.employeeName} (ID: ${mov.employeeId}) | Cantidad: ${mov.quantity}",
                             style = MaterialTheme.typography.bodySmall
-                        ) // <-- Cierra el Text
-                    } // <-- Cierra el Column dentro del Card
-                } // <-- Cierra el Card
+                        )
+                    }
+                }
             }
-        } // <-- Cierra el LazyColumn
-    } // <-- Cierra el Column principal
-} // <-- Cierra el Composable AdminMovementsScreen
+        }
+    }
+}

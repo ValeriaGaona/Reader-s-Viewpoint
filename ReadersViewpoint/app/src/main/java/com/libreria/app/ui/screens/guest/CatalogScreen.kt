@@ -15,11 +15,11 @@ fun CatalogScreen(
     vm: CatalogViewModel,
     onViewDetails: (String) -> Unit,
     onGoInventory: () -> Unit,
-    onGoAdmin: () -> Unit,
-    isGuest: Boolean // <-- ¡PARÁMETRO FALTANTE AGREGADO!
-) { // <-- Abre el cuerpo de la función aquí
-
-    // Las variables se mueven dentro del cuerpo de la función
+    onGoEmployees: () -> Unit, // 👈 NUEVO HANDLER PARA EMPLEADOS
+    onGoMovements: () -> Unit, // 👈 NUEVO HANDLER PARA MOVIMIENTOS
+    onCreateAccount: () -> Unit,
+    isGuest: Boolean
+) {
     val books by vm.books.collectAsState()
     val cart by vm.cart.collectAsState()
 
@@ -27,12 +27,19 @@ fun CatalogScreen(
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             Text("Catálogo", style = MaterialTheme.typography.headlineMedium)
 
-            // Ahora la condición se puede evaluar porque isGuest es un parámetro
             if (!isGuest) {
-                Row {
-                    Button(onClick = onGoInventory) { Text("Inventario") }
-                    Spacer(Modifier.width(8.dp))
-                    Button(onClick = onGoAdmin) { Text("Admin") }
+                Column { // Contenedor vertical para las dos filas
+                    Row { // Primera fila
+                        Button(onClick = onGoInventory) { Text("Inventario") }
+                        Spacer(Modifier.width(8.dp))
+                        Button(onClick = onGoEmployees) { Text("Empleados") }
+                    }
+                    Spacer(Modifier.height(8.dp)) // Espacio entre filas
+                    Row { // Segunda fila
+                        Button(onClick = onCreateAccount) { Text("Crear usuario") }
+                        Spacer(Modifier.width(8.dp))
+                        Button(onClick = onGoMovements) { Text("Movimientos") }
+                    }
                 }
             }
         }
@@ -53,12 +60,11 @@ fun CatalogScreen(
                         }
 
                         Column {
-                            // Uso de template strings corregido (si es necesario en el código original)
                             Button(onClick = { vm.addToCart(book.id) }) { Text("Agregar (${cart[book.id] ?: 0})") }
                         }
                     }
                 }
             }
         }
-    } // Cierra el Column
-} // <-- Cierra el Composable CatalogScreen
+    }
+}
