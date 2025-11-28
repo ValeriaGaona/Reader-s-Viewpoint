@@ -5,7 +5,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -44,20 +43,21 @@ fun AppEntry() {
 
     NavHost(navController = navController, startDestination = "login") {
         composable("login") {
-            LoginScreen(authVm, onGuest = {
-                navController.navigate("catalog/guest")
-            }, onSignedIn = {
-                val role = authVm.currentUser.value?.role ?: "employee"
-                if (role == "admin") {
-                    navController.navigate("catalog/admin")
-                } else {
-                    navController.navigate("catalog/employee")
+            LoginScreen(
+                authVm,
+                onGuest = { navController.navigate("catalog/guest") },
+                onSignedIn = {
+                    val role = authVm.currentUser.value?.role ?: "employee"
+                    if (role == "admin") {
+                        navController.navigate("catalog/admin")
+                    } else {
+                        navController.navigate("catalog/employee")
+                    }
                 }
-            })
+            )
         }
 
-        // --- Rutas de Catálogo (Actualizadas con nuevos handlers) ---
-
+        // --- Rutas de Catálogo ---
         composable("catalog/guest") {
             CatalogScreen(
                 vm = catalogVm,
@@ -75,18 +75,6 @@ fun AppEntry() {
                 vm = catalogVm,
                 onViewDetails = { bookId -> /* TODO: Navegar a detalles */ },
                 onGoInventory = { navController.navigate("inventory") },
-                onGoEmployees = { /* No disponible */ },
-                onGoMovements = { /* No disponible */ },
-                onCreateAccount = { /* No disponible */ },
-                isGuest = false
-            )
-        }
-
-        composable("catalog/admin") {
-            CatalogScreen(
-                vm = catalogVm,
-                onViewDetails = { bookId -> /* TODO: Navegar a detalles */ },
-                onGoInventory = { navController.navigate("inventory") },
                 onGoEmployees = { navController.navigate("admin/employees") },
                 onGoMovements = { navController.navigate("admin/movements") },
                 onCreateAccount = { navController.navigate("admin/create") },
@@ -94,8 +82,19 @@ fun AppEntry() {
             )
         }
 
-        // --- Rutas de Empleado ---
+//        composable("catalog/admin") {
+//            CatalogScreen(
+//                vm = catalogVm,
+//                onViewDetails = { bookId -> /* TODO: Navegar a detalles */ },
+//                onGoInventory = { navController.navigate("inventory") },
+//                onGoEmployees = { navController.navigate("admin/employees") },
+//                onGoMovements = { navController.navigate("admin/movements") },
+//                onCreateAccount = { navController.navigate("admin/create") },
+//                isGuest = false
+//            )
+//        }
 
+        // --- Rutas de Empleado ---
         composable("inventory") {
             InventoryScreen(
                 vm = inventoryVm,
@@ -106,15 +105,16 @@ fun AppEntry() {
         }
 
         composable("addbook") {
-            AddBookScreen(vm = inventoryVm, creatorId = authVm.currentUser.value?.uid ?: "EMP_GUEST",
-                creatorName = authVm.currentUser.value?.email ?: "Unknown Creator") {
+            AddBookScreen(
+                vm = inventoryVm,
+                creatorId = authVm.currentUser.value?.uid ?: "EMP_GUEST",
+                creatorName = authVm.currentUser.value?.email ?: "Unknown Creator"
+            ) {
                 navController.popBackStack()
             }
         }
 
-
-        // --- Rutas de Administrador (Ahora con funciones de retorno/navegación) ---
-
+        // --- Rutas de Administrador ---
         composable("admin/movements") {
             AdminMovementsScreen(
                 vmInventory = inventoryVm,
@@ -122,26 +122,16 @@ fun AppEntry() {
             )
         }
 
-        // Archivo: MainActivity.kt
-
-// ... (código anterior)
-
         composable("admin/employees") {
+            val employees by adminVm.employees.collectAsState()
             EmployeeListScreen(
-                // 🛑 CORRECCIÓN: Indica explícitamente que es una lista de UserProfile
-                employees = listOf<com.libreria.app.data.model.UserProfile>(),
-
-                // ✅ onViewDetails: (String) -> Unit
+                employees = employees,
                 onViewDetails = { employeeId ->
-                    println("Viewing details for employee $employeeId")
+                    navController.navigate("admin/employees/$employeeId")
                 },
-
-                // ✅ onClose: () -> Unit
                 onClose = { navController.popBackStack() }
             )
         }
-
-// ... (código posterior)
 
         composable("admin/create") {
             CreateAccountScreen(adminVm) {

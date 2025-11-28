@@ -12,6 +12,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.libreria.app.data.model.Movimiento
 import com.libreria.app.vm.InventoryViewModel
+import androidx.compose.foundation.Image
+import androidx.compose.ui.res.painterResource
+import com.libreria.app.R
+import androidx.compose.ui.layout.ContentScale
 
 @Composable
 fun AdminMovementsScreen(
@@ -19,6 +23,16 @@ fun AdminMovementsScreen(
     onClose: () -> Unit // ✅ HANDLER AÑADIDO
 ) {
     val movements by vmInventory.movements.collectAsState()
+
+    Image(
+        painter = painterResource(id = R.drawable.imgmov),
+        contentDescription = "_",
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(180.dp), // Ajusta la altura según necesites
+        contentScale = ContentScale.Crop // Recorta la imagen para llenar el espacio
+    )
+    Spacer(Modifier.height(12.dp))
 
     Column(Modifier.fillMaxSize().padding(12.dp)) {
 
