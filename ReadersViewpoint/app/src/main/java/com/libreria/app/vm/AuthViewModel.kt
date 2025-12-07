@@ -30,7 +30,6 @@ class AuthViewModel(private val repo: LibreriaRepository, private val firebase: 
         _currentUser.value = null
     }
     fun signInAsGuest(onResult: () -> Unit) {
-        // Guest - no auth; currentUser stays null
         onResult()
     }
 }

@@ -6,88 +6,114 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
+// ⬅️ Importa el icono de retroceso
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.libreria.app.R
 import com.libreria.app.data.model.UserProfile
-// ❌ La importación de InventoryViewModel fue removida, ya que la clase no se usa en la vista.
 
-
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EmployeeListScreen(
-    // ❌ vm: InventoryViewModel, <-- ELIMINADO para corregir el error de compilación
     employees: List<UserProfile>,
-    onViewDetails: (String) -> Unit, // ✅ HANDLER
-    onClose: () -> Unit // ✅ HANDLER
+    onViewDetails: (String) -> Unit,
+    onClose: () -> Unit
 ) {
-
-    Image(
-        painter = painterResource(id = R.drawable.imgemp),
-        contentDescription = "_",
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(180.dp), // Ajusta la altura según necesites
-        contentScale = ContentScale.Crop // Recorta la imagen para llenar el espacio
-    )
-    Spacer(Modifier.height(12.dp))
-
-    Column(Modifier.fillMaxSize().padding(12.dp)) {
-
-        // --- Encabezado con botón de cierre ---
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text("Empleados", style = MaterialTheme.typography.headlineMedium)
-
-            // Botón de cierre
-            IconButton(onClick = onClose) {
-                Icon(
-                    imageVector = Icons.Default.Close,
-                    contentDescription = "Cerrar lista de empleados"
-                )
-            }
-        }
-
-        Spacer(Modifier.height(8.dp))
-
-        // --- Lista de Empleados ---
-        LazyColumn {
-            items(employees) { e ->
-                // ✅ Hacemos el Card cliqueable para ver detalles
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(6.dp)
-                        .clickable { onViewDetails(e.uid) } // Llama a onViewDetails con el ID del empleado
-                ) {
-                    Row(Modifier.padding(8.dp), horizontalArrangement = Arrangement.SpaceBetween) {
-                        Column {
-                            Text(e.displayName.ifBlank { e.email }, style = MaterialTheme.typography.titleMedium)
-                            Text("ID: ${e.uid}", style = MaterialTheme.typography.bodySmall)
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = Color(0xFFF5F5EF)
+    ) {
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    title = { Text("Gestión de Personal") },
+                    navigationIcon = {
+                        IconButton(onClick = onClose) {
+                            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Atrás")
                         }
-                        Text(e.role)
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = Color(0xFF655D4D),
+                        titleContentColor = Color.White,
+                        navigationIconContentColor = Color.White
+                    )
+                )
+            },
+            containerColor = Color(0xFFF5F5EF)
+        ) { paddingValues ->
+
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+                    .padding(horizontal = 12.dp)
+            ) {
+
+                Spacer(Modifier.height(16.dp))
+
+                if (employees.isEmpty()) {
+                    Text(
+                        "No se encontró ningún usuario con rol 'admin' o 'employee'.",
+                        modifier = Modifier.padding(vertical = 24.dp)
+                    )
+                } else {
+                    LazyColumn(
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        items(employees) { e ->
+                            Card(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(6.dp)
+                                    .clickable { onViewDetails(e.uid) },
+                                colors = CardDefaults.cardColors(
+                                    containerColor = Color(0xC87A6F5F),
+                                    contentColor = Color.Black
+                                )
+                            ){
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(12.dp),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Column(Modifier.weight(1f)) {
+                                        Text(
+                                            e.displayName.ifBlank { e.email },
+                                            style = MaterialTheme.typography.titleMedium
+                                        )
+                                        Text("ID: ${e.uid}", style = MaterialTheme.typography.bodySmall)
+                                    }
+                                    Text(
+                                        e.role.replaceFirstChar { it.uppercase() },
+                                        style = MaterialTheme.typography.titleSmall
+                                    )
+                                }
+                            }
+                        }
                     }
                 }
             }
         }
     }
 }
-// Agregando el Preview para que el archivo compile completamente
+
+
 @Preview(showBackground = true)
 @Composable
 fun EmployeeListScreenPreview() {
     val sampleEmployees = listOf(
-        UserProfile(uid = "1", displayName = "Alice", email = "alice@example.com", role = "Admin"),
-        UserProfile(uid = "2", displayName = "Bob", email = "bob@example.com", role = "User")
+        UserProfile(uid = "1", displayName = "Alice Smith", email = "alice@example.com", role = "admin"),
+        UserProfile(uid = "2", displayName = "", email = "bob_employee@example.com", role = "employee")
     )
     EmployeeListScreen(
         employees = sampleEmployees,

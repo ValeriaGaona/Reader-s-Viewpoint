@@ -16,10 +16,7 @@ private val DarkColorScheme = darkColorScheme(
     secondary = PurpleGrey80,
     tertiary = Pink80,
 
-    // 🎨 Fondo de pantalla
-    background = Color(0xFF1E3A5F), // Fondo azul oscuro
-
-    // 🎨 Color de las Tarjetas (Cards)
+    background = Color(0xFF1E3A5F),
     surface = Color(0xFF2E4C7A)
 )
 
@@ -27,12 +24,8 @@ private val LightColorScheme = lightColorScheme(
     primary = Purple40,
     secondary = PurpleGrey40,
     tertiary = Pink40,
-
-    // 🎨 Fondo de pantalla
-    background = Color(0xFFF0F4F8), // Fondo blanco/gris claro
-
-    // 🎨 Color de las Tarjetas (Cards)
-    surface = Color(0xFFFFFFFF)
+    background = Color(0xFF676C70),
+    surface = Color(0xFF655D4D)
 
     /* Other default colors to override
     background = Color(0xFFFFFBFE),

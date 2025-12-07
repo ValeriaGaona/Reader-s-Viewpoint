@@ -5,8 +5,11 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -14,83 +17,240 @@ import androidx.compose.ui.unit.dp
 import com.libreria.app.R
 import com.libreria.app.data.model.Libro
 import com.libreria.app.vm.InventoryViewModel
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 
+data class StockAction(
+    val bookId: String,
+    val bookTitle: String,
+    val quantity: Int
+)
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InventoryScreen(
     vm: InventoryViewModel,
     onAddBook: () -> Unit,
     currentEmployeeId: String,
-    currentEmployeeName: String // <-- Parámetro completo y cierre de paréntesis
-) { // <-- Abre el cuerpo de la función aquí
-
-    // Variables movidas dentro del cuerpo de la función
+    currentEmployeeName: String,
+    onGoBack: () -> Unit
+) {
     val books by vm.books.collectAsState()
-    val movements by vm.movements.collectAsState()
 
-    Image(
-        painter = painterResource(id = R.drawable.imginv),
-        contentDescription = "_",
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(180.dp), // Ajusta la altura según necesites
-        contentScale = ContentScale.Crop // Recorta la imagen para llenar el espacio
-    )
-    Spacer(Modifier.height(12.dp))
-    Column(Modifier.fillMaxSize().padding(12.dp)) {
-        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            Text("Inventario", style = MaterialTheme.typography.headlineMedium)
-            Button(onClick = onAddBook) { Text("Agregar libro") }
+    var searchId by remember { mutableStateOf("") }
+
+    var showConfirmationDialog by remember { mutableStateOf(false) }
+    var actionToConfirm by remember { mutableStateOf<StockAction?>(null) }
+
+    val filteredBooks = remember(books, searchId) {
+        if (searchId.isBlank()) {
+            books
+        } else {
+            books.filter { libro ->
+                libro.id.contains(searchId, ignoreCase = true) ||
+                        libro.title.contains(searchId, ignoreCase = true)
+            }
         }
+    }
 
-        Spacer(Modifier.height(8.dp))
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = Color(0xFFF5F5EF)
+    ) {Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Gestión de Inventario") },
+                navigationIcon = {
+                    IconButton(onClick = onGoBack) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Volver")
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = Color(0xFF655D4D),
+                    titleContentColor = Color.White,
+                    navigationIconContentColor = Color.White
+                )
+            )
+        },
+        containerColor = Color(0xFFF5F5EF)
+    ) { paddingValues ->
 
-        // Search by ID
-        var searchId by remember { mutableStateOf("") }
-        Row {
-            OutlinedTextField(value = searchId, onValueChange = { searchId = it }, label = { Text("Buscar por ID") })
-            Spacer(Modifier.width(8.dp))
-            Button(onClick = {
-                if (searchId.isNotBlank()) {
-                    // open change stock UI
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues) // ⬅️ APLICA EL PADDING DEL TOP BAR
+                .padding(horizontal = 12.dp) // Mantiene el padding horizontal
+        ) {
+
+            Spacer(Modifier.height(12.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(" ", style = MaterialTheme.typography.headlineMedium)
+
+                Button(
+                    onClick = { onAddBook() },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFF655D4D),
+                        contentColor = Color.White
+                    )
+                ) {
+                    Text("Agregar libro")
                 }
-            }) { Text("Buscar") }
-        }
+            }
 
-        Spacer(Modifier.height(8.dp))
+            Spacer(Modifier.height(16.dp))
 
-        LazyColumn {
-            items(books) { book ->
-                Card(Modifier.fillMaxWidth().padding(6.dp)) {
-                    Row(
-                        modifier = Modifier.padding(12.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween
+            OutlinedTextField(
+                value = searchId,
+                onValueChange = { searchId = it },
+                label = { Text("Buscar libro por ID o Título") },
+                singleLine = true,
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(Modifier.height(16.dp))
+
+            LazyColumn {
+                items(filteredBooks, key = { it.id }) { book ->
+                    var quantityInput by remember(book.id) { mutableStateOf("1") }
+                    val quantityToAdd = quantityInput.toIntOrNull() ?: 0
+                    val isQuantityValid = quantityToAdd > 0
+
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 6.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = Color(0xC87A6F5F),
+                            contentColor = Color.Black
+                        )
                     ) {
-                        Column(modifier = Modifier.clickable {
-                            // Open dialog to add/remove stock
-                        }) {
-                            Text(book.title)
-                            Text("ID: ${book.id} - Stock: ${book.quantity}")
-                        }
-                        Column {
-                            // CORRECCIÓN 3.1: Llama a changeStock y cierra el paréntesis
-                            Button(onClick = {
-                                vm.changeStock(book.id, 1, currentEmployeeId, currentEmployeeName)
-                            }) {
-                                Text("Stock +1") // Texto ajustado para claridad
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(12.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            // Información del Libro
+                            Column(modifier = Modifier.weight(1f).clickable { /* ... */ }) {
+                                Text(book.title, style = MaterialTheme.typography.titleMedium)
+                                Text(
+                                    "ID: ${book.id} - Stock: ${book.quantity}",
+                                    style = MaterialTheme.typography.bodySmall
+                                )
                             }
 
-                            Spacer(Modifier.height(4.dp))
+                            Spacer(Modifier.width(16.dp))
 
-                            // CORRECCIÓN 3.2: Llama a changeStock y cierra el paréntesis
-                            Button(onClick = {
-                                vm.changeStock(book.id, -1, currentEmployeeId, currentEmployeeName)
-                            }) {
-                                Text("Stock -1") // Texto ajustado para claridad
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+
+                                OutlinedTextField(
+                                    value = quantityInput,
+                                    onValueChange = { newValue ->
+                                        if (newValue.all { it.isDigit() } || newValue.isBlank()) {
+                                            quantityInput = newValue
+                                        }
+                                    },
+                                    keyboardOptions = KeyboardOptions(
+                                        keyboardType = KeyboardType.Number
+                                    ),
+                                    label = { Text("Cant.") },
+                                    singleLine = true,
+                                    modifier = Modifier.width(80.dp)
+                                )
+
+                                Spacer(Modifier.width(8.dp))
+
+                                Button(
+                                    onClick = {
+                                        actionToConfirm = StockAction(
+                                            bookId = book.id,
+                                            bookTitle = book.title,
+                                            quantity = quantityToAdd
+                                        )
+                                        showConfirmationDialog = true
+                                    },
+                                    enabled = isQuantityValid,
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = Color(0xFF655D4D),
+                                        contentColor = Color.White
+                                    ),
+                                    modifier = Modifier.height(56.dp)
+                                ) {
+                                    Icon(
+                                        Icons.Default.Add,
+                                        contentDescription = "Añadir $quantityToAdd al stock"
+                                    )
+                                }
                             }
                         }
                     }
                 }
             }
         }
-    } // Cierra el Column
-} // <-- Cierra el Composable InventoryScreen
+    }
+    }
+
+    if (showConfirmationDialog && actionToConfirm != null) {
+        ConfirmationDialog(
+            action = actionToConfirm!!,
+            onDismiss = {
+                showConfirmationDialog = false
+                actionToConfirm = null
+            },
+            onConfirm = { action ->
+                vm.changeStock(
+                    action.bookId,
+                    action.quantity,
+                    currentEmployeeId,
+                    currentEmployeeName
+                )
+                showConfirmationDialog = false
+                actionToConfirm = null
+            }
+        )
+    }
+}
+
+@Composable
+fun ConfirmationDialog(
+    action: StockAction,
+    onDismiss: () -> Unit,
+    onConfirm: (StockAction) -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Confirmar Adición de Stock") },
+        text = {
+            Text(
+                "¿Está seguro que desea añadir ${action.quantity} unidades al libro:\n" +
+                        "\"${action.bookTitle}\" (ID: ${action.bookId})?"
+            )
+        },
+        confirmButton = {
+            Button(
+                onClick = { onConfirm(action) },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFF655D4D),
+                    contentColor = Color.White
+                )
+            ) {
+                Text("Confirmar (+${action.quantity})")
+            }
+        },
+        dismissButton = {
+            OutlinedButton(
+                onClick = onDismiss
+            ) {
+                Text("Cancelar")
+            }
+        }
+    )
+}

@@ -3,8 +3,28 @@ package com.libreria.app.data.repository
 import com.libreria.app.data.model.Libro
 import com.libreria.app.data.model.Movimiento
 import com.libreria.app.data.model.UserProfile
+import com.libreria.app.data.model.Ticket // Asegúrate de que esta ruta sea correcta
 import com.libreria.app.data.remote.FirebaseService
-class LibreriaRepository(private val firebase: FirebaseService) {
+
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
+import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.channels.awaitClose
+
+// ✅ IMPORTACIONES CLAVE AÑADIDAS PARA SOLUCIONAR EL ERROR:
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+
+// ✅ IMPORTACIÓN CLAVE PARA TAREAS DE FIREBASE:
+import kotlinx.coroutines.tasks.await
+
+
+class LibreriaRepository(
+    private val firebase: FirebaseService,
+    private val db: FirebaseFirestore
+) {
+
+    // Funciones existentes
     suspend fun getAllBooks(): List<Libro> = firebase.fetchLibros()
     suspend fun getBookById(id: String): Libro? = firebase.getLibroById(id)
     suspend fun upsertBook(libro: Libro) = firebase.upsertLibro(libro)
@@ -12,31 +32,56 @@ class LibreriaRepository(private val firebase: FirebaseService) {
     suspend fun addMovement(m: Movimiento) = firebase.addMovimiento(m)
     suspend fun getMovements(): List<Movimiento> = firebase.fetchMovimientos()
     suspend fun getUserProfile(uid: String): UserProfile? = firebase.getUserProfile(uid)
+
+
+    suspend fun addTicket(ticket: Ticket) {
+        db.collection("tickets").document(ticket.id).set(ticket).await()
+    }
+
+
+    suspend fun fetchTickets(): List<Ticket> = withContext(Dispatchers.IO) {
+        db.collection("tickets")
+            .orderBy("date", com.google.firebase.firestore.Query.Direction.DESCENDING)
+            .get()
+            .await()
+            .toObjects(Ticket::class.java)
+    }
+
+    suspend fun getTicketById(ticketId: String): Ticket? = withContext(Dispatchers.IO) {
+        db.collection("tickets")
+            .document(ticketId)
+            .get()
+            .await()
+            .toObject(Ticket::class.java)
+    }
+
+
     suspend fun createAccount(email: String, password: String, name: String, role: String) =
         firebase.createAccount(email, password, name, role)
-}
 
-//package com.libreria.app.data.repository
-//
-//import android.content.Context // 🚨 Necesario
-//import com.libreria.app.data.local.LibreriaDatabase // Asume que tienes esto
-//import com.libreria.app.data.remote.FirebaseService
-//
-//class LibreriaRepository(
-//    context: Context, // 👈 AHORA ACEPTA EL CONTEXTO
-//    private val firebase: FirebaseService
-//) {
-//    // Inicialización de ROOM usando el Contexto
-//    private val db = LibreriaDatabase.getDatabase(context) // Asume que tienes un patrón Singleton para Room
-//    private val libroDao = db.libroDao()
-//    private val movimientoDao = db.movimientoDao()
-//
-//    // ... (El resto de tus funciones de repositorio)
-//
-//    // Ejemplo de cómo obtendrías los libros (Room)
-//    suspend fun getAllBooks() = libroDao.getAll()
-//
-//    // Ejemplo de Firebase (Firestore)
-//    suspend fun getBookById(id: String) = firebase.getBookById(id)
-//
-//}
+    fun getUsersWithRoles(roles: List<String>): Flow<List<UserProfile>> {
+        return firebase.fetchUsersWithRoles(roles)
+    }
+
+    fun getUserDetails(uid: String): Flow<UserProfile?> = callbackFlow {
+        val userDocRef = db.collection("users").document(uid)
+
+        val subscription = userDocRef.addSnapshotListener { snapshot, e ->
+            if (e != null) {
+                channel.trySend(null)
+                return@addSnapshotListener
+            }
+
+            if (snapshot != null && snapshot.exists()) {
+                val user = snapshot.toObject(UserProfile::class.java)
+                channel.trySend(user)
+            } else {
+                channel.trySend(null)
+            }
+        }
+
+        awaitClose {
+            subscription.remove()
+        }
+    }
+}

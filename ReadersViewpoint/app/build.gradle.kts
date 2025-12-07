@@ -70,4 +70,9 @@ dependencies {
     implementation("androidx.room:room-runtime:2.6.1") // Usar la última versión
     //ksp("androidx.room:room-compiler:2.6.1")
     implementation("androidx.room:room-ktx:2.6.1")
+    implementation("androidx.compose.material:material-icons-extended")
+    implementation("androidx.compose.ui:ui-text")
+    implementation("com.google.zxing:core:3.5.3")
+// Librería para trabajar con imágenes en Compose (si no la tienes)
+    implementation("androidx.compose.ui:ui-graphics:1.6.0")
 }
