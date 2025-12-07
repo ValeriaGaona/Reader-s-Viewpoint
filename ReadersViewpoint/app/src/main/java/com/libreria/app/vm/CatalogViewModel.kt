@@ -20,6 +20,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.coroutines.Dispatchers
 import com.libreria.app.data.model.Ticket
 import com.libreria.app.data.model.TicketItem
+import kotlinx.coroutines.flow.map
 
 class CatalogViewModel(private val repo: LibreriaRepository) : ViewModel() {
 
@@ -143,5 +144,10 @@ class CatalogViewModel(private val repo: LibreriaRepository) : ViewModel() {
 
             emit(null)
         }
+    }
+
+    // Dentro de CatalogViewModel.kt
+    fun getBookById(id: String): Flow<Libro?> {
+        return books.map { list -> list.find { it.id == id } }
     }
 }

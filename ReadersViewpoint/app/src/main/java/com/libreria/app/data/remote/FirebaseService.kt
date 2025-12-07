@@ -67,6 +67,25 @@ class FirebaseService(
         return uid
     }
 
+    suspend fun deleteUserAccount(userId: String) {
+        // 1. ELIMINAR DATOS DEL USUARIO DE FIRESTORE (Colección "users")
+        db.collection("users").document(userId).delete().await()
+
+        // 2. ELIMINAR LA CUENTA DE FIREBASE AUTH
+        // Nota: Solo un administrador autenticado con credenciales de Firebase Admin SDK
+        // puede eliminar otros usuarios directamente. Si estás haciendo esto desde el cliente,
+        // debes usar Cloud Functions o un mecanismo de seguridad diferente.
+        // Si el usuario a eliminar es el usuario actualmente autenticado, usarías auth.currentUser.delete().
+
+        // Si estás seguro de que el usuario que ejecuta esta acción es un Administrador
+        // y estás utilizando Cloud Functions o un backend seguro para la eliminación de Auth:
+        // Por ahora, asumiremos que la eliminación de datos de Firestore es suficiente o que
+        // tienes un mecanismo de backend seguro.
+
+        // Si estás intentando eliminar al *usuario actualmente logueado* (no es el caso aquí):
+        // auth.currentUser?.delete()?.await()
+    }
+
     fun fetchUsersWithRoles(roles: List<String>): Flow<List<UserProfile>> = callbackFlow {
 
         val listener = usersCol

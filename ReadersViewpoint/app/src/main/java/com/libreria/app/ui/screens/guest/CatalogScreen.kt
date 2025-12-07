@@ -18,12 +18,14 @@ import com.libreria.app.R
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.material.icons.Icons
-// ⬅️ Importa Iconos necesarios
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.ui.text.TextStyle
+import java.text.NumberFormat // Importación requerida
+import java.util.Locale // Importación requerida
+import androidx.compose.ui.text.font.FontWeight // Importación requerida
 
-@OptIn(ExperimentalMaterial3Api::class) // ⬅️ AÑADIDO
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CatalogScreen(
     vm: CatalogViewModel,
@@ -33,6 +35,9 @@ fun CatalogScreen(
 ) {
     val books by vm.books.collectAsState()
     val cart by vm.cart.collectAsState()
+
+    // 💰 Inicializa el formateador de moneda
+    val currencyFormat = remember { NumberFormat.getCurrencyInstance(Locale.getDefault()) }
 
     val isCartEmpty = cart.isEmpty()
 
@@ -166,8 +171,8 @@ fun CatalogScreen(
                                 .fillMaxWidth()
                                 .padding(6.dp),
                             colors = CardDefaults.cardColors(
-                                containerColor = Color(0xC87A6F5F),
-                                contentColor = Color.Black
+                                containerColor = Color(0xC87A6F5F), // Fondo más oscuro
+                                contentColor = Color.White // Texto principal en blanco
                             )
                         ) {
                             Row(
@@ -178,11 +183,20 @@ fun CatalogScreen(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Column(Modifier.clickable { onViewDetails(book.id) }) {
-                                    Text(book.title, style = MaterialTheme.typography.titleMedium)
+                                    Text(book.title, style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold))
+
+                                    // ✅ Muestra el precio del libro con formato de moneda
+                                    Text(
+                                        currencyFormat.format(book.price),
+                                        style = MaterialTheme.typography.titleLarge.copy(color = Color(
+                                            0xFFFFFFFF
+                                        ), fontWeight = FontWeight.ExtraBold) // Precio resaltado
+                                    )
+
                                     Text(book.author, style = MaterialTheme.typography.bodyMedium)
                                     Text(
                                         "Categoría: ${book.category} - Stock: ${book.quantity}",
-                                        style = MaterialTheme.typography.bodySmall
+                                        style = MaterialTheme.typography.bodySmall.copy(color = Color.LightGray)
                                     )
                                 }
 

@@ -55,6 +55,10 @@ class LibreriaRepository(
             .toObject(Ticket::class.java)
     }
 
+    suspend fun deleteUser(userId: String) {
+        // Ejecuta la eliminación en el servicio de Firebase (ej. en FirebaseService.kt)
+        firebase.deleteUserAccount(userId)
+    }
 
     suspend fun createAccount(email: String, password: String, name: String, role: String) =
         firebase.createAccount(email, password, name, role)
