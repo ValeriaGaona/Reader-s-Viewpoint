@@ -7,9 +7,9 @@ import com.google.firebase.firestore.Query
 import com.libreria.app.data.model.Libro
 import com.libreria.app.data.model.Movimiento
 import com.libreria.app.data.model.UserProfile
-import kotlinx.coroutines.channels.awaitClose // ⬅️ AÑADIDO
-import kotlinx.coroutines.flow.Flow // ⬅️ AÑADIDO
-import kotlinx.coroutines.flow.callbackFlow // ⬅️ AÑADIDO
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 
 class FirebaseService(
@@ -18,9 +18,8 @@ class FirebaseService(
 ) {
     private val librosCol = db.collection("libros")
     private val movCol = db.collection("movimientos")
-    private val usersCol = db.collection("users") // stores roles and display names
+    private val usersCol = db.collection("users")
 
-    // Auth helpers
     fun currentUser(): FirebaseUser? = auth.currentUser
     suspend fun signIn(email: String, password: String) = auth.signInWithEmailAndPassword(email, password).await()
     suspend fun signUp(email: String, password: String) = auth.createUserWithEmailAndPassword(email, password).await()
@@ -54,7 +53,6 @@ class FirebaseService(
         movCol.document(m.id).set(m).await()
     }
     suspend fun fetchMovimientos(): List<Movimiento> {
-        // CORRECCIÓN: Usar DESCENDING, que es la constante correcta.
         val snap = movCol.orderBy("dateIso", Query.Direction.DESCENDING).get().await()
         return snap.documents.mapNotNull { it.toObject(Movimiento::class.java) }
     }
@@ -68,22 +66,7 @@ class FirebaseService(
     }
 
     suspend fun deleteUserAccount(userId: String) {
-        // 1. ELIMINAR DATOS DEL USUARIO DE FIRESTORE (Colección "users")
         db.collection("users").document(userId).delete().await()
-
-        // 2. ELIMINAR LA CUENTA DE FIREBASE AUTH
-        // Nota: Solo un administrador autenticado con credenciales de Firebase Admin SDK
-        // puede eliminar otros usuarios directamente. Si estás haciendo esto desde el cliente,
-        // debes usar Cloud Functions o un mecanismo de seguridad diferente.
-        // Si el usuario a eliminar es el usuario actualmente autenticado, usarías auth.currentUser.delete().
-
-        // Si estás seguro de que el usuario que ejecuta esta acción es un Administrador
-        // y estás utilizando Cloud Functions o un backend seguro para la eliminación de Auth:
-        // Por ahora, asumiremos que la eliminación de datos de Firestore es suficiente o que
-        // tienes un mecanismo de backend seguro.
-
-        // Si estás intentando eliminar al *usuario actualmente logueado* (no es el caso aquí):
-        // auth.currentUser?.delete()?.await()
     }
 
     fun fetchUsersWithRoles(roles: List<String>): Flow<List<UserProfile>> = callbackFlow {

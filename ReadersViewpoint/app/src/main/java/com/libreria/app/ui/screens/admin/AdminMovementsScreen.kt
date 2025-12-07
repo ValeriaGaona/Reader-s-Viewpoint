@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-// ⬅️ Importa Iconos necesarios
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.*
@@ -21,7 +20,7 @@ import androidx.compose.ui.res.painterResource
 import com.libreria.app.R
 import androidx.compose.ui.layout.ContentScale
 
-@OptIn(ExperimentalMaterial3Api::class) // ⬅️ AÑADIDO
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AdminMovementsScreen(
     vmInventory: InventoryViewModel,

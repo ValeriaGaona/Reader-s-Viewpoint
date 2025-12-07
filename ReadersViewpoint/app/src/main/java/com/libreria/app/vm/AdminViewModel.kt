@@ -17,33 +17,18 @@ class AdminViewModel(private val repo: LibreriaRepository) : ViewModel() {
         refreshEmployees()
     }
 
-//    fun refreshEmployees() {
-//        val rolesToFetch = listOf("employee", "admin")
-//
-//        viewModelScope.launch {
-//            repo.getUsersWithRoles(rolesToFetch)
-//                .collect { users ->
-//                    _employees.value = users
-//                }
-//        }
-//    }
-
     fun refreshEmployees() {
         val rolesToFetch = listOf("employee", "admin")
 
         viewModelScope.launch {
             try {
-                // ✅ ENVUELVE LA LLAMADA Y LA COLECCIÓN EN UN TRY-CATCH
                 repo.getUsersWithRoles(rolesToFetch)
                     .collect { users ->
                         _employees.value = users
                     }
             } catch (e: Exception) {
-                // 🛑 Maneja la excepción aquí para evitar que la app se cierre.
-                // Es probable que Firestore falle aquí si hay un problema.
                 println("Error cargando empleados: ${e.message}")
 
-                // Opcional: Establecer una lista vacía para que la UI no se bloquee
                 _employees.value = emptyList()
             }
         }
@@ -68,18 +53,11 @@ class AdminViewModel(private val repo: LibreriaRepository) : ViewModel() {
     fun deleteUser(userId: String) {
         viewModelScope.launch {
             try {
-                // Llama a la función del repositorio para realizar la eliminación.
                 repo.deleteUser(userId)
-
-                // Opcional: Si tienes una lista de empleados en el ViewModel,
-                // actualízala después de la eliminación.
-                // refreshEmployees()
 
                 println("Usuario $userId eliminado con éxito.")
             } catch (e: Exception) {
-                // Manejar errores de eliminación (ej: permisos insuficientes, usuario no encontrado)
                 println("Error al eliminar el usuario $userId: ${e.message}")
-                // Aquí podrías emitir un error al UI si lo necesitas.
             }
         }
     }

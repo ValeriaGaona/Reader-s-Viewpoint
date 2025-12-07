@@ -1,4 +1,3 @@
-
 package com.libreria.app.ui.screens.guest
 
 import androidx.compose.foundation.clickable
@@ -21,9 +20,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.ui.text.TextStyle
-import java.text.NumberFormat // Importación requerida
-import java.util.Locale // Importación requerida
-import androidx.compose.ui.text.font.FontWeight // Importación requerida
+import java.text.NumberFormat
+import java.util.Locale
+import androidx.compose.ui.text.font.FontWeight
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -171,8 +170,8 @@ fun CatalogScreen(
                                 .fillMaxWidth()
                                 .padding(6.dp),
                             colors = CardDefaults.cardColors(
-                                containerColor = Color(0xC87A6F5F), // Fondo más oscuro
-                                contentColor = Color.White // Texto principal en blanco
+                                containerColor = Color(0xC87A6F5F),
+                                contentColor = Color.White
                             )
                         ) {
                             Row(
@@ -185,12 +184,11 @@ fun CatalogScreen(
                                 Column(Modifier.clickable { onViewDetails(book.id) }) {
                                     Text(book.title, style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold))
 
-                                    // ✅ Muestra el precio del libro con formato de moneda
                                     Text(
                                         currencyFormat.format(book.price),
                                         style = MaterialTheme.typography.titleLarge.copy(color = Color(
                                             0xFFFFFFFF
-                                        ), fontWeight = FontWeight.ExtraBold) // Precio resaltado
+                                        ), fontWeight = FontWeight.ExtraBold)
                                     )
 
                                     Text(book.author, style = MaterialTheme.typography.bodyMedium)

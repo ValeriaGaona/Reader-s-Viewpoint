@@ -3,19 +3,14 @@ package com.libreria.app.data.repository
 import com.libreria.app.data.model.Libro
 import com.libreria.app.data.model.Movimiento
 import com.libreria.app.data.model.UserProfile
-import com.libreria.app.data.model.Ticket // Asegúrate de que esta ruta sea correcta
+import com.libreria.app.data.model.Ticket
 import com.libreria.app.data.remote.FirebaseService
-
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.channels.awaitClose
-
-// ✅ IMPORTACIONES CLAVE AÑADIDAS PARA SOLUCIONAR EL ERROR:
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-
-// ✅ IMPORTACIÓN CLAVE PARA TAREAS DE FIREBASE:
 import kotlinx.coroutines.tasks.await
 
 
@@ -24,7 +19,6 @@ class LibreriaRepository(
     private val db: FirebaseFirestore
 ) {
 
-    // Funciones existentes
     suspend fun getAllBooks(): List<Libro> = firebase.fetchLibros()
     suspend fun getBookById(id: String): Libro? = firebase.getLibroById(id)
     suspend fun upsertBook(libro: Libro) = firebase.upsertLibro(libro)
@@ -56,7 +50,6 @@ class LibreriaRepository(
     }
 
     suspend fun deleteUser(userId: String) {
-        // Ejecuta la eliminación en el servicio de Firebase (ej. en FirebaseService.kt)
         firebase.deleteUserAccount(userId)
     }
 

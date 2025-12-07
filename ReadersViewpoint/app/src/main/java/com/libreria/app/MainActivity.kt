@@ -1,4 +1,3 @@
-
 package com.libreria.app
 
 import android.os.Bundle
@@ -83,18 +82,13 @@ fun AppEntry() {
             )
         }
 
-        // ...
-
         composable("guest_catalog") {
             CatalogScreen(
                 vm = catalogVm,
                 onViewDetails = { bookId -> navController.navigate("book_details/$bookId") },
                 onGoShoppingCart = { navController.navigate("shoppingcart") },
-                // ✅ CORRECCIÓN: Navegar explícitamente a "login" y limpiar la pila.
                 onGoBack = {
                     navController.navigate("login") {
-                        // popUpTo asegura que la pila de navegación se limpia hasta el destino 'guest_catalog' (inclusive),
-                        // eliminando el catálogo de la pila para simular un "logout".
                         popUpTo("guest_catalog") { inclusive = true }
                     }
                 }
@@ -108,10 +102,8 @@ fun AppEntry() {
                 onGoMovements = { navController.navigate("admin/movements") },
                 onCreateAccount = { navController.navigate("admin/create") },
                 onGoSalesHistory = { navController.navigate("sales_history") },
-                // ✅ CORRECCIÓN: Navegar explícitamente a "login" y limpiar la pila de la administración.
                 onGoBack = {
                     navController.navigate("login") {
-                        // Elimina la pantalla de administración de la pila de navegación.
                         popUpTo("admin_dashboard") { inclusive = true }
                     }
                 }
@@ -124,25 +116,20 @@ fun AppEntry() {
         ) { backStackEntry ->
             val bookId = backStackEntry.arguments?.getString("bookId")
 
-            // 1. Verificar si el ID existe
             if (bookId.isNullOrEmpty()) {
-                navController.popBackStack() // Volver si no hay ID
+                navController.popBackStack()
                 return@composable
             }
 
-            // 2. Usar el ViewModel para buscar el libro completo por ID
             val bookDetails by catalogVm.getBookById(bookId).collectAsState(initial = null)
 
-            // 3. Mostrar la pantalla si los detalles están disponibles
             if (bookDetails != null) {
                 com.libreria.app.ui.screens.guest.BookDetailsScreen(
-                    book = bookDetails!!, // Pasamos el objeto Libro
+                    book = bookDetails!!,
                     vm = catalogVm,
                     onBack = { navController.popBackStack() }
                 )
             } else {
-                // Muestra un indicador de carga mientras se buscan los detalles
-                // o si el libro no se encuentra (aunque debería ser rápido).
                 Box(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
@@ -253,10 +240,9 @@ fun AppEntry() {
                 employeeId = employeeId,
                 adminVm = adminVm,
                 onBack = { navController.popBackStack() },
-                // ✅ CORRECCIÓN FINAL: Se activa la función deleteUser y se navega hacia atrás.
                 onDelete = { uid ->
-                    adminVm.deleteUser(uid) // Llama a la lógica de eliminación del ViewModel
-                    navController.popBackStack() // Vuelve a la lista de empleados
+                    adminVm.deleteUser(uid)
+                    navController.popBackStack()
                 }
             )
         }

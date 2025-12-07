@@ -19,17 +19,15 @@ import java.util.Locale
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BookDetailsScreen(book: Libro, vm: CatalogViewModel, onBack: () -> Unit) {
-    // Inicializa el formateador de moneda
     val currencyFormat = remember { NumberFormat.getCurrencyInstance(Locale.getDefault()) }
 
-    // Obtiene el estado actual del libro en el carrito
     val cart by vm.cart.collectAsState()
     val currentQuantity = cart[book.id] ?: 0
     val canAddToCart = currentQuantity < book.quantity
 
     Surface(
         modifier = Modifier.fillMaxSize(),
-        color = Color(0xFFF5F5EF) // Fondo claro
+        color = Color(0xFFF5F5EF)
     ) {
         Scaffold(
             topBar = {
@@ -41,7 +39,7 @@ fun BookDetailsScreen(book: Libro, vm: CatalogViewModel, onBack: () -> Unit) {
                         }
                     },
                     colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = Color(0xFF655D4D), // Color de la barra superior
+                        containerColor = Color(0xFF655D4D),
                         titleContentColor = Color.White,
                         navigationIconContentColor = Color.White
                     )
@@ -57,10 +55,9 @@ fun BookDetailsScreen(book: Libro, vm: CatalogViewModel, onBack: () -> Unit) {
                     .padding(16.dp)
             ) {
 
-                // --- SECCIÓN DE PRECIO Y AUTOR ---
                 Card(
                     modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color(0xFFE5E0D8)) // Fondo del card más suave
+                    colors = CardDefaults.cardColors(containerColor = Color(0xFFE5E0D8))
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
                         Text(
@@ -78,7 +75,6 @@ fun BookDetailsScreen(book: Libro, vm: CatalogViewModel, onBack: () -> Unit) {
                     }
                 }
 
-                // --- SECCIÓN DE DATOS Y SINOPSIS ---
                 Text("Detalles del Libro", style = MaterialTheme.typography.titleMedium, modifier = Modifier.padding(bottom = 8.dp))
 
                 Card(
@@ -93,26 +89,23 @@ fun BookDetailsScreen(book: Libro, vm: CatalogViewModel, onBack: () -> Unit) {
 
                         Text("Sinopsis:", style = MaterialTheme.typography.titleMedium)
                         Spacer(Modifier.height(4.dp))
-                        // Scrollable para sinopsis largas
                         Text(
                             book.synopsis,
                             style = MaterialTheme.typography.bodyMedium,
                             modifier = Modifier.fillMaxWidth()
                                 .heightIn(max = 200.dp)
-                                .weight(1f, fill = false) // Permite que ocupe espacio sin empujar el resto
+                                .weight(1f, fill = false)
                         )
                     }
                 }
 
                 Spacer(Modifier.height(16.dp))
 
-                // --- SECCIÓN DE ACCIONES (CARRITO Y VOLVER) ---
                 Row(
                     modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    // Botón para volver
                     OutlinedButton(
                         onClick = onBack,
                         colors = ButtonDefaults.outlinedButtonColors(
@@ -122,7 +115,6 @@ fun BookDetailsScreen(book: Libro, vm: CatalogViewModel, onBack: () -> Unit) {
                         Text("Volver al Catálogo")
                     }
 
-                    // Control de Cantidad para el Carrito
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Button(
                             onClick = { vm.removeFromCart(book.id) },

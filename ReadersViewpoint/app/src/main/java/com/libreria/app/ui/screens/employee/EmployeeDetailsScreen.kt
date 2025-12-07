@@ -1,12 +1,10 @@
-
-
 package com.libreria.app.ui.screens.employee
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Person // 1. Nuevo Icono
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -27,7 +25,7 @@ fun EmployeeDetailsScreen(
     employeeId: String,
     adminVm: AdminViewModel,
     onBack: () -> Unit,
-    onDelete: (String) -> Unit // Función que dispara la eliminación
+    onDelete: (String) -> Unit
 ) {
     val employeeDetails by adminVm.getUserDetails(employeeId).collectAsState(initial = null)
 
@@ -64,7 +62,6 @@ fun EmployeeDetailsScreen(
     )
     { padding ->
         if (employeeDetails == null) {
-            // Estado de carga centrado
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -82,7 +79,6 @@ fun EmployeeDetailsScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
 
-                // 2. Tarjeta Elevada con los detalles
                 ElevatedCard(
                     modifier = Modifier.fillMaxWidth(),
                     colors = CardDefaults.elevatedCardColors(
@@ -96,7 +92,6 @@ fun EmployeeDetailsScreen(
                             .padding(24.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        // 3. Icono de Avatar (más grande)
                         Icon(
                             imageVector = Icons.Filled.Person,
                             contentDescription = "Avatar",
@@ -105,7 +100,6 @@ fun EmployeeDetailsScreen(
                         )
                         Spacer(Modifier.height(16.dp))
 
-                        // Nombre (Headline)
                         Text(
                             employeeDetails!!.displayName.ifBlank { "Nombre No Asignado" },
                             style = MaterialTheme.typography.headlineMedium,
@@ -114,18 +108,16 @@ fun EmployeeDetailsScreen(
                         )
                         Spacer(Modifier.height(8.dp))
 
-                        // Rol (Destacado)
                         Text(
                             employeeDetails!!.role.uppercase(),
                             style = MaterialTheme.typography.titleLarge,
-                            color = Color(0xFF388E3C), // Un verde para el rol
+                            color = Color(0xFF388E3C),
                             fontWeight = FontWeight.SemiBold
                         )
                         Spacer(Modifier.height(16.dp))
                         Divider() // Separador
                         Spacer(Modifier.height(16.dp))
 
-                        // Email
                         Text(
                             "Email:",
                             style = MaterialTheme.typography.bodySmall.copy(color = Color.Gray)
@@ -137,7 +129,6 @@ fun EmployeeDetailsScreen(
                         )
                         Spacer(Modifier.height(16.dp))
 
-                        // ID de Empleado (Discreto)
                         Text(
                             "ID de Usuario:",
                             style = MaterialTheme.typography.bodySmall.copy(color = Color.Gray)
@@ -152,7 +143,6 @@ fun EmployeeDetailsScreen(
         }
     }
 
-    // El Diálogo de Confirmación se mantiene igual
     if (showDeleteDialog && employeeDetails != null) {
         AlertDialog(
             onDismissRequest = { showDeleteDialog = false },

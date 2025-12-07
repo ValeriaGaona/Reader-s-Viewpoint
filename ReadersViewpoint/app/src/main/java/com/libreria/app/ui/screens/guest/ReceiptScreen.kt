@@ -1,4 +1,3 @@
-
 package com.libreria.app.ui.screens.guest
 
 import androidx.compose.foundation.Image
@@ -50,15 +49,12 @@ fun ReceiptScreen(
         val currentTicket = ticket
         if (ticketId.isNotEmpty() && currentTicket != null) {
 
-            // 1. Construye la lista de artículos en una cadena (ej: 2xLibroA;1xLibroB)
             val itemsString = currentTicket.items.joinToString(separator = ";") { item ->
-                "${item.quantity}x${item.title.replace(" ", "_")}" // Reemplazar espacios para evitar errores de análisis
+                "${item.quantity}x${item.title.replace(" ", "_")}"
             }
 
-            // 2. Combina todos los datos en una cadena delimitada (ej: ID|TOTAL|ARTÍCULOS)
             val dataToEncode = "$ticketId|${currentTicket.total}|$itemsString"
 
-            // 3. Genera el QR con la cadena completa
             qrCodeBitmap = generateQrCodeBitmap(dataToEncode, 256)
         }
     }

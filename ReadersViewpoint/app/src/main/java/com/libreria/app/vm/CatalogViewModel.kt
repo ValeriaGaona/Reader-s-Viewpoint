@@ -1,4 +1,3 @@
-
 package com.libreria.app.vm
 
 import androidx.lifecycle.ViewModel
@@ -63,7 +62,6 @@ class CatalogViewModel(private val repo: LibreriaRepository) : ViewModel() {
 
     fun refreshBooks() {
         viewModelScope.launch {
-            // La función del repositorio es suspend
             _books.value = repo.getAllBooks()
         }
     }
@@ -145,8 +143,6 @@ class CatalogViewModel(private val repo: LibreriaRepository) : ViewModel() {
             emit(null)
         }
     }
-
-    // Dentro de CatalogViewModel.kt
     fun getBookById(id: String): Flow<Libro?> {
         return books.map { list -> list.find { it.id == id } }
     }

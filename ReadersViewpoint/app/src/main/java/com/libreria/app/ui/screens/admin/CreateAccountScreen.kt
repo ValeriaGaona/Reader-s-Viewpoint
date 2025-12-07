@@ -1,11 +1,9 @@
-
 package com.libreria.app.ui.screens.admin
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-// ⬅️ Importa Iconos necesarios
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -17,7 +15,7 @@ import androidx.compose.ui.unit.dp
 import com.libreria.app.R
 import com.libreria.app.vm.AdminViewModel
 
-@OptIn(ExperimentalMaterial3Api::class) // ⬅️ AÑADIDO
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateAccountScreen(adminVm: AdminViewModel, onDone: () -> Unit, onClose: () -> Unit) {
     var email by remember { mutableStateOf("") }

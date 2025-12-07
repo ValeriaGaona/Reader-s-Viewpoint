@@ -121,7 +121,7 @@ fun ShoppingCartScreen(
 fun CartItem(book: Libro, quantity: Int, vm: CatalogViewModel) {
     Surface(
         modifier = Modifier.fillMaxSize(),
-        color = Color(0xFFF5F5EF) // Color personalizado
+        color = Color(0xFFF5F5EF)
     ) {
     Card(
         modifier = Modifier

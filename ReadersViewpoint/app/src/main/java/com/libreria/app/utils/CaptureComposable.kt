@@ -22,7 +22,6 @@ fun rememberCaptureComposable(
     return remember {
         { composableView: View, size: IntSize ->
             if (size.width > 0 && size.height > 0) {
-                // 1. Crea un Bitmap con el tamaño del Composable capturado
                 val bitmap = Bitmap.createBitmap(size.width, size.height, Bitmap.Config.ARGB_8888)
                 val canvas = Canvas(bitmap)
 

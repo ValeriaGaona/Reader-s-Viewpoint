@@ -15,17 +15,11 @@ class SplashScreenActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Aquí puedes usar un Layout XML simple o Compose para el logo
         setContent {
-            // 🎨 Muestra tu logo aquí.
             SplashScreenUI()
         }
-
-        // Lógica de carga y redirección
         lifecycleScope.launch {
-            // Espera un mínimo de 1.5 segundos para que el usuario vea el logo
             delay(1500)
-
             checkNetworkLoop()
         }
     }
@@ -33,11 +27,9 @@ class SplashScreenActivity : ComponentActivity() {
     private fun checkNetworkLoop() {
         lifecycleScope.launch {
             while (!isNetworkAvailable(this@SplashScreenActivity)) {
-                // Si no hay internet, espera y vuelve a intentar.
-                delay(3000) // Espera 3 segundos
+                delay(3000)
             }
 
-            // Si la red está disponible, navega a la actividad principal (login).
             navigateToMain()
         }
     }
@@ -46,7 +38,6 @@ class SplashScreenActivity : ComponentActivity() {
         val connectivityManager =
             context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
-        // Verifica si hay alguna conexión activa (Wi-Fi o datos móviles)
         val activeNetwork = connectivityManager.activeNetwork
         return activeNetwork != null
     }
@@ -54,6 +45,6 @@ class SplashScreenActivity : ComponentActivity() {
     private fun navigateToMain() {
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
-        finish() // Cierra la SplashScreen para que el usuario no pueda volver a ella.
+        finish()
     }
 }

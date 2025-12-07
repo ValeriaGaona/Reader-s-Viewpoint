@@ -80,8 +80,8 @@ fun InventoryScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues) // ⬅️ APLICA EL PADDING DEL TOP BAR
-                .padding(horizontal = 12.dp) // Mantiene el padding horizontal
+                .padding(paddingValues)
+                .padding(horizontal = 12.dp)
         ) {
 
             Spacer(Modifier.height(12.dp))
@@ -138,7 +138,6 @@ fun InventoryScreen(
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            // Información del Libro
                             Column(modifier = Modifier.weight(1f).clickable { /* ... */ }) {
                                 Text(book.title, style = MaterialTheme.typography.titleMedium)
                                 Text(
