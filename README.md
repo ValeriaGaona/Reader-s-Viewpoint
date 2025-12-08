@@ -9,6 +9,16 @@
 
 
 
+
+
+# 📚 Sistema de Gestión de Librería "Libreria App"
+
+El Sistema de Gestión de Librería es una aplicación móvil **Android nativa** diseñada para digitalizar y optimizar la administración de inventario, ventas y personal. Su objetivo es sustituir los procesos manuales de registro de libros y transacciones por un sistema centralizado y digital que permite a la administración y a los empleados llevar un **control preciso del catálogo**, gestionar las ventas (tickets), rastrear los movimientos de inventario y facilitar la gestión del equipo de trabajo.
+
+La aplicación utiliza un sistema de autenticación seguro, donde el personal accede con correo electrónico y contraseña. Se distinguen dos perfiles principales: el **Administrador**, con control total de la gestión de la tienda y el personal, y el **Empleado**, centrado en las operaciones diarias. Todo el sistema de permisos y el flujo de datos se gestiona en tiempo real con **Firebase Firestore**.
+
+---
+
 ### Estructura del proyecto
 
 ```
@@ -62,12 +72,6 @@
     |--- SplashScreenUI.kt
 ```
 
-
-# 📚 Sistema de Gestión de Librería "Libreria App"
-
-El Sistema de Gestión de Librería es una aplicación móvil **Android nativa** diseñada para digitalizar y optimizar la administración de inventario, ventas y personal. Su objetivo es sustituir los procesos manuales de registro de libros y transacciones por un sistema centralizado y digital que permite a la administración y a los empleados llevar un **control preciso del catálogo**, gestionar las ventas (tickets), rastrear los movimientos de inventario y facilitar la gestión del equipo de trabajo.
-
-La aplicación utiliza un sistema de autenticación seguro, donde el personal accede con correo electrónico y contraseña. Se distinguen dos perfiles principales: el **Administrador**, con control total de la gestión de la tienda y el personal, y el **Empleado**, centrado en las operaciones diarias. Todo el sistema de permisos y el flujo de datos se gestiona en tiempo real con **Firebase Firestore**.
 
 ---
 
