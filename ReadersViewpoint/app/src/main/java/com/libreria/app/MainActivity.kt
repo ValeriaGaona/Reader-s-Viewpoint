@@ -34,7 +34,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.foundation.layout.fillMaxSize
 
 
+/**
+ * La actividad principal de la aplicación y el punto de entrada para Compose.
+ *
+ * Configura el tema de Material Design y carga el componente raíz [AppEntry].
+ */
 class MainActivity : ComponentActivity() {
+    /**
+     * Se llama cuando la actividad es creada.
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -45,27 +53,45 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+/**
+ * Componente Composable raíz que establece la arquitectura de la aplicación (Service, Repository, ViewModels).
+ *
+ * Contiene el [NavHost] principal que maneja la navegación entre todas las pantallas de la aplicación,
+ * desde la autenticación hasta las funciones administrativas.
+ */
 @Composable
 fun AppEntry() {
     val navController = rememberNavController()
+    // Inicialización y persistencia de servicios y repositorios usando remember
     val firebase = remember { FirebaseService() }
 
     val firestore = remember { FirebaseFirestore.getInstance() }
 
     val repo = remember { LibreriaRepository(firebase, firestore) }
 
+    // Inicialización y persistencia de ViewModels
     val authVm = remember { AuthViewModel(repo, firebase) }
     val catalogVm = remember { CatalogViewModel(repo) }
     val inventoryVm = remember { InventoryViewModel(repo) }
     val adminVm = remember { AdminViewModel(repo) }
 
+    /**
+     * Define el grafo de navegación de la aplicación.
+     * @param navController Controlador de navegación para manejar las transiciones.
+     * @param startDestination Ruta inicial al abrir la aplicación ("login").
+     */
     NavHost(navController = navController, startDestination = "login") {
 
+        /**
+         * Ruta de inicio de sesión.
+         * Maneja la navegación basada en el rol de usuario o acceso como invitado.
+         */
         composable("login") {
             LoginScreen(
                 authVm,
                 onGuest = {
                     navController.navigate("guest_catalog") {
+                        // Limpia la pila para que 'login' no sea accesible con el botón atrás.
                         popUpTo("login") { inclusive = true }
                     }
                 },
@@ -76,18 +102,23 @@ fun AppEntry() {
                         else -> "guest_catalog"
                     }
                     navController.navigate(destination) {
+                        // Limpia la pila para evitar regresar a 'login' después del éxito.
                         popUpTo("login") { inclusive = true }
                     }
                 }
             )
         }
 
+        /**
+         * Ruta del catálogo de libros para usuarios invitados o no autenticados.
+         */
         composable("guest_catalog") {
             CatalogScreen(
                 vm = catalogVm,
                 onViewDetails = { bookId -> navController.navigate("book_details/$bookId") },
                 onGoShoppingCart = { navController.navigate("shoppingcart") },
                 onGoBack = {
+                    // Cierra la sesión/vista de invitado y regresa a la pantalla de login.
                     navController.navigate("login") {
                         popUpTo("guest_catalog") { inclusive = true }
                     }
@@ -95,6 +126,10 @@ fun AppEntry() {
             )
         }
 
+        /**
+         * Ruta del panel principal de administración/empleados.
+         * La navegación es manejada por [AdministrationScreen] (botones).
+         */
         composable("admin_dashboard") {
             AdministrationScreen(
                 onGoInventory = { navController.navigate("inventory") },
@@ -103,6 +138,7 @@ fun AppEntry() {
                 onCreateAccount = { navController.navigate("admin/create") },
                 onGoSalesHistory = { navController.navigate("sales_history") },
                 onGoBack = {
+                    // Cierra la sesión y regresa a la pantalla de login.
                     navController.navigate("login") {
                         popUpTo("admin_dashboard") { inclusive = true }
                     }
@@ -110,6 +146,12 @@ fun AppEntry() {
             )
         }
 
+        /**
+         * Ruta para ver los detalles de un libro específico.
+         *
+         * @param route Define el argumento requerido: bookId.
+         * @param arguments Define el tipo de argumento.
+         */
         composable(
             route = "book_details/{bookId}",
             arguments = listOf(navArgument("bookId") { type = NavType.StringType })
@@ -121,6 +163,7 @@ fun AppEntry() {
                 return@composable
             }
 
+            // Recopila los detalles del libro por ID como estado.
             val bookDetails by catalogVm.getBookById(bookId).collectAsState(initial = null)
 
             if (bookDetails != null) {
@@ -130,6 +173,7 @@ fun AppEntry() {
                     onBack = { navController.popBackStack() }
                 )
             } else {
+                // Muestra un indicador de carga si los detalles del libro aún no están disponibles.
                 Box(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
@@ -139,20 +183,30 @@ fun AppEntry() {
             }
         }
 
+        /**
+         * Ruta del carrito de compras.
+         */
         composable("shoppingcart") {
             ShoppingCartScreen(
                 vm = catalogVm,
                 onClose = { navController.popBackStack() },
                 onCheckoutSuccess = { ticketId ->
+                    // Navega a la pantalla de recibo tras el éxito de la compra.
                     navController.navigate("receipt/$ticketId?origin=cart") {
+                        // Limpia la pila para que no se pueda volver al carrito después del checkout.
                         popUpTo("shoppingcart") { inclusive = true }
                     }
                 },
                 onGoBack = { navController.popBackStack() },
-                onGoCheckout = { /* No se usa */ }
+                onGoCheckout = { /* No se usa en esta implementación */ }
             )
         }
 
+        /**
+         * Ruta para mostrar el recibo de una venta.
+         *
+         * @param route Define argumentos: ticketId (requerido) y origin (opcional, para saber de dónde viene).
+         */
         composable(
             route = "receipt/{ticketId}?origin={origin}",
             arguments = listOf(
@@ -169,18 +223,22 @@ fun AppEntry() {
                 ticketId = ticketId,
                 origin = origin,
                 onGoHome = {
+                    // Regresa al catálogo de invitados (limpia las vistas transaccionales).
                     navController.navigate("guest_catalog") {
                         popUpTo("guest_catalog") { inclusive = true }
                         launchSingleTop = true
                     }
                 },
-
                 onNavigateBackToHistory = {
+                    // Regresa al historial de ventas.
                     navController.popBackStack("sales_history", inclusive = false)
                 }
             )
         }
 
+        /**
+         * Ruta del historial de ventas (accesible desde el dashboard de administrador).
+         */
         composable("sales_history") {
             SalesHistoryScreen(
                 vm = catalogVm,
@@ -191,6 +249,9 @@ fun AppEntry() {
             )
         }
 
+        /**
+         * Ruta del inventario principal (accesible desde el dashboard).
+         */
         composable("inventory") {
             InventoryScreen(
                 vm = inventoryVm,
@@ -201,6 +262,9 @@ fun AppEntry() {
             )
         }
 
+        /**
+         * Ruta para añadir un nuevo libro al inventario.
+         */
         composable("addbook") {
             AddBookScreen(
                 vm = inventoryVm,
@@ -211,6 +275,9 @@ fun AppEntry() {
             }
         }
 
+        /**
+         * Ruta para ver los movimientos de inventario (auditoría).
+         */
         composable("admin/movements") {
             AdminMovementsScreen(
                 vmInventory = inventoryVm,
@@ -218,9 +285,11 @@ fun AppEntry() {
             )
         }
 
-
+        /**
+         * Ruta para ver la lista de empleados.
+         */
         composable("admin/employees") {
-            // Esto recopila el flujo de empleados en la UI
+            // Recopila el flujo de empleados en la UI
             val employees by adminVm.employees.collectAsState()
             EmployeeListScreen(
                 employees = employees,
@@ -231,6 +300,11 @@ fun AppEntry() {
             )
         }
 
+        /**
+         * Ruta para ver los detalles de un empleado específico.
+         *
+         * @param route Define el argumento requerido: employeeId.
+         */
         composable(
             route = "admin/employees/{employeeId}",
             arguments = listOf(navArgument("employeeId") { type = NavType.StringType })
@@ -241,12 +315,15 @@ fun AppEntry() {
                 adminVm = adminVm,
                 onBack = { navController.popBackStack() },
                 onDelete = { uid ->
-                    adminVm.deleteUser(uid)
-                    navController.popBackStack()
+                    adminVm.deleteUser(uid) // Llama a la lógica de eliminación del ViewModel
+                    navController.popBackStack() // Vuelve a la lista de empleados
                 }
             )
         }
 
+        /**
+         * Ruta para crear una nueva cuenta de empleado/administrador.
+         */
         composable("admin/create") {
             CreateAccountScreen(
                 adminVm = adminVm,

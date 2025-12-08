@@ -1,4 +1,3 @@
-
 package com.libreria.app.ui.screens.admin
 
 import androidx.compose.foundation.layout.*
@@ -20,6 +19,14 @@ import androidx.compose.ui.res.painterResource
 import com.libreria.app.R
 import androidx.compose.ui.layout.ContentScale
 
+/**
+ * Pantalla que muestra el historial de movimientos de inventario.
+ *
+ * Muestra una lista cronológica de las acciones de inventario realizadas (entradas, salidas, etc.).
+ *
+ * @param vmInventory El [InventoryViewModel] para obtener el flujo de datos de movimientos.
+ * @param onClose Callback para regresar al [AdministrationScreen].
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AdminMovementsScreen(

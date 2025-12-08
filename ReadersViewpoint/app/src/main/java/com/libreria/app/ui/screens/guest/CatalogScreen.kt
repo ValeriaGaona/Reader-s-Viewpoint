@@ -24,6 +24,17 @@ import java.text.NumberFormat
 import java.util.Locale
 import androidx.compose.ui.text.font.FontWeight
 
+/**
+ * Pantalla principal que muestra el catálogo de libros a los usuarios (invitados o con sesión).
+ *
+ * Permite buscar libros, filtrar por categoría, añadir y quitar artículos del carrito,
+ * y navegar a la vista detallada del libro o al carrito de compras.
+ *
+ * @param vm El [CatalogViewModel] que gestiona la lista de libros y el carrito.
+ * @param onViewDetails Callback para navegar a la vista de detalles de un libro, pasando el ID.
+ * @param onGoShoppingCart Callback para navegar a la pantalla del carrito de compras.
+ * @param onGoBack Callback para volver a la pantalla anterior (Login/Dashboard).
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CatalogScreen(
@@ -35,13 +46,14 @@ fun CatalogScreen(
     val books by vm.books.collectAsState()
     val cart by vm.cart.collectAsState()
 
-    // 💰 Inicializa el formateador de moneda
+    // Inicializa el formateador de moneda
     val currencyFormat = remember { NumberFormat.getCurrencyInstance(Locale.getDefault()) }
 
     val isCartEmpty = cart.isEmpty()
 
     val imageResId = R.drawable.imgcat
 
+    // Extrae y ordena las categorías únicas de la lista de libros
     val categories = remember(books) {
         books.map { it.category }.distinct().sorted()
     }
@@ -50,6 +62,7 @@ fun CatalogScreen(
     var selectedCategory by remember { mutableStateOf("Todas") }
     var expanded by remember { mutableStateOf(false) }
 
+    // Aplica el filtrado por búsqueda y categoría
     val filteredBooks = remember(books, searchQuery, selectedCategory) {
         books.filter { book ->
             val matchesSearch = searchQuery.isBlank() ||
@@ -103,6 +116,7 @@ fun CatalogScreen(
                 )
                 Spacer(Modifier.height(12.dp))
 
+                // Campo de búsqueda
                 OutlinedTextField(
                     value = searchQuery,
                     onValueChange = { searchQuery = it },
@@ -118,6 +132,7 @@ fun CatalogScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
 
+                    // Selector de categoría (Dropdown)
                     Box(modifier = Modifier.wrapContentSize(Alignment.TopStart)) {
                         OutlinedButton(
                             onClick = { expanded = true }
@@ -149,6 +164,7 @@ fun CatalogScreen(
                         }
                     }
 
+                    // Botón para ver el carrito
                     Button(
                         onClick = onGoShoppingCart,
                         enabled = !isCartEmpty,
@@ -163,6 +179,7 @@ fun CatalogScreen(
 
                 Spacer(Modifier.height(8.dp))
 
+                // Lista de libros
                 LazyColumn(Modifier.weight(1f)) {
                     items(filteredBooks) { book ->
                         Card(
@@ -181,6 +198,7 @@ fun CatalogScreen(
                                 horizontalArrangement = Arrangement.SpaceBetween,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
+                                // Detalles e información del libro (clickable para ver detalles)
                                 Column(Modifier.clickable { onViewDetails(book.id) }) {
                                     Text(book.title, style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold))
 
@@ -198,11 +216,13 @@ fun CatalogScreen(
                                     )
                                 }
 
+                                // Controles de carrito
                                 Column(horizontalAlignment = Alignment.End) {
                                     val currentQuantity = cart[book.id] ?: 0
                                     val canAddToCart = currentQuantity < book.quantity
 
                                     Row(verticalAlignment = Alignment.CenterVertically) {
+                                        // Botón Restar del Carrito
                                         Button(
                                             onClick = { vm.removeFromCart(book.id) },
                                             enabled = currentQuantity > 0,
@@ -218,6 +238,7 @@ fun CatalogScreen(
 
                                         Spacer(Modifier.width(8.dp))
 
+                                        // Cantidad en el carrito
                                         Text(
                                             text = "$currentQuantity",
                                             style = MaterialTheme.typography.titleMedium,
@@ -227,6 +248,7 @@ fun CatalogScreen(
 
                                         Spacer(Modifier.width(8.dp))
 
+                                        // Botón Añadir al Carrito
                                         Button(
                                             onClick = { vm.addToCart(book.id) },
                                             enabled = canAddToCart,

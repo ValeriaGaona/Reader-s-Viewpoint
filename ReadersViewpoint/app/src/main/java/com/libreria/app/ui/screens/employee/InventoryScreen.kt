@@ -22,12 +22,31 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 
+/**
+ * Clase de datos que encapsula la acción de stock a confirmar.
+ *
+ * @param bookId ID del libro afectado.
+ * @param bookTitle Título del libro afectado.
+ * @param quantity Cantidad a añadir (delta).
+ */
 data class StockAction(
     val bookId: String,
     val bookTitle: String,
     val quantity: Int
 )
 
+/**
+ * Pantalla para la gestión y manipulación del inventario de libros.
+ *
+ * Permite buscar libros, ver su stock actual, añadir nuevas unidades y
+ * navegar a la pantalla de agregar nuevos libros.
+ *
+ * @param vm El [InventoryViewModel] para la lógica de inventario.
+ * @param onAddBook Callback para navegar a la pantalla de agregar libro.
+ * @param currentEmployeeId ID del empleado actualmente autenticado (para registrar movimientos).
+ * @param currentEmployeeName Nombre del empleado actualmente autenticado.
+ * @param onGoBack Callback para regresar a la pantalla anterior (Dashboard).
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InventoryScreen(
@@ -44,6 +63,7 @@ fun InventoryScreen(
     var showConfirmationDialog by remember { mutableStateOf(false) }
     var actionToConfirm by remember { mutableStateOf<StockAction?>(null) }
 
+    // Filtra la lista de libros basada en el texto de búsqueda (ID o Título)
     val filteredBooks = remember(books, searchId) {
         if (searchId.isBlank()) {
             books
@@ -93,6 +113,7 @@ fun InventoryScreen(
             ) {
                 Text(" ", style = MaterialTheme.typography.headlineMedium)
 
+                // Botón para agregar un nuevo libro al sistema
                 Button(
                     onClick = { onAddBook() },
                     colors = ButtonDefaults.buttonColors(
@@ -106,6 +127,7 @@ fun InventoryScreen(
 
             Spacer(Modifier.height(16.dp))
 
+            // Campo de búsqueda
             OutlinedTextField(
                 value = searchId,
                 onValueChange = { searchId = it },
@@ -116,6 +138,7 @@ fun InventoryScreen(
 
             Spacer(Modifier.height(16.dp))
 
+            // Lista de libros filtrados
             LazyColumn {
                 items(filteredBooks, key = { it.id }) { book ->
                     var quantityInput by remember(book.id) { mutableStateOf("1") }
@@ -138,6 +161,7 @@ fun InventoryScreen(
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
+                            // Información del libro
                             Column(modifier = Modifier.weight(1f).clickable { /* ... */ }) {
                                 Text(book.title, style = MaterialTheme.typography.titleMedium)
                                 Text(
@@ -150,6 +174,7 @@ fun InventoryScreen(
 
                             Row(verticalAlignment = Alignment.CenterVertically) {
 
+                                // Campo para ingresar la cantidad a añadir
                                 OutlinedTextField(
                                     value = quantityInput,
                                     onValueChange = { newValue ->
@@ -167,6 +192,7 @@ fun InventoryScreen(
 
                                 Spacer(Modifier.width(8.dp))
 
+                                // Botón de añadir stock
                                 Button(
                                     onClick = {
                                         actionToConfirm = StockAction(
@@ -197,6 +223,7 @@ fun InventoryScreen(
     }
     }
 
+    // Diálogo de confirmación
     if (showConfirmationDialog && actionToConfirm != null) {
         ConfirmationDialog(
             action = actionToConfirm!!,
@@ -205,6 +232,7 @@ fun InventoryScreen(
                 actionToConfirm = null
             },
             onConfirm = { action ->
+                // Llama al ViewModel para cambiar el stock y registrar el movimiento
                 vm.changeStock(
                     action.bookId,
                     action.quantity,
@@ -218,6 +246,13 @@ fun InventoryScreen(
     }
 }
 
+/**
+ * Diálogo de confirmación para añadir stock.
+ *
+ * @param action La acción de stock ([StockAction]) a confirmar.
+ * @param onDismiss Callback para descartar el diálogo.
+ * @param onConfirm Callback que se ejecuta al confirmar la acción.
+ */
 @Composable
 fun ConfirmationDialog(
     action: StockAction,

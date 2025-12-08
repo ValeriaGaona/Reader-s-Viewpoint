@@ -20,6 +20,16 @@ import androidx.compose.ui.unit.dp
 import com.libreria.app.R
 import com.libreria.app.data.model.UserProfile
 
+/**
+ * Pantalla que lista todos los usuarios con roles de 'admin' o 'employee'.
+ *
+ * Permite a los administradores visualizar el personal y acceder a la vista de detalles
+ * de cada usuario.
+ *
+ * @param employees Lista de objetos [UserProfile] a mostrar.
+ * @param onViewDetails Callback para navegar a la vista de detalles de un usuario, pasando su UID.
+ * @param onClose Callback para regresar al [AdministrationScreen].
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EmployeeListScreen(

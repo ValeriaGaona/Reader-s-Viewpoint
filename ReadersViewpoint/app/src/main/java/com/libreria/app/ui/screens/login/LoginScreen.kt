@@ -14,6 +14,16 @@ import androidx.compose.ui.unit.dp
 import com.libreria.app.R
 import com.libreria.app.vm.AuthViewModel
 
+/**
+ * Pantalla de inicio de sesión de la aplicación.
+ *
+ * Permite a los usuarios ingresar sus credenciales (email y contraseña) para iniciar sesión
+ * o acceder como invitado.
+ *
+ * @param authVm El [AuthViewModel] que maneja la lógica de autenticación.
+ * @param onGuest Callback que se ejecuta cuando se selecciona entrar como invitado.
+ * @param onSignedIn Callback que se ejecuta cuando el inicio de sesión es exitoso.
+ */
 @Composable
 fun LoginScreen(authVm: AuthViewModel, onGuest: () -> Unit, onSignedIn: () -> Unit) {
     var email by remember { mutableStateOf("") }
@@ -23,7 +33,7 @@ fun LoginScreen(authVm: AuthViewModel, onGuest: () -> Unit, onSignedIn: () -> Un
 
     Surface(
         modifier = Modifier.fillMaxSize(),
-        color = Color(0xFFF5F5EF)
+        color = Color(0xFFF5F5EF) // Fondo de la interfaz
     ) {
         Column(
             modifier = Modifier
@@ -33,6 +43,7 @@ fun LoginScreen(authVm: AuthViewModel, onGuest: () -> Unit, onSignedIn: () -> Un
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
+            // Imagen de bienvenida/logo
             Image(
                 painter = painterResource(id = R.drawable.imgini),
                 contentDescription = "Logo de bienvenida",
@@ -43,6 +54,7 @@ fun LoginScreen(authVm: AuthViewModel, onGuest: () -> Unit, onSignedIn: () -> Un
             )
             Spacer(Modifier.height(12.dp))
 
+            // Campo de texto para el Email
             OutlinedTextField(
                 value = email,
                 onValueChange = { email = it },
@@ -50,6 +62,7 @@ fun LoginScreen(authVm: AuthViewModel, onGuest: () -> Unit, onSignedIn: () -> Un
                 modifier = Modifier.fillMaxWidth()
             )
 
+            // Campo de texto para la Contraseña
             OutlinedTextField(
                 value = pass,
                 onValueChange = { pass = it },
@@ -60,9 +73,11 @@ fun LoginScreen(authVm: AuthViewModel, onGuest: () -> Unit, onSignedIn: () -> Un
 
             Spacer(Modifier.height(12.dp))
 
+            // Botón de Iniciar Sesión
             Button(
                 onClick = {
                     loading = true
+                    // Llama a la función de inicio de sesión del ViewModel
                     authVm.signIn(email, pass) { ok, msg ->
                         loading = false
                         if (ok) onSignedIn() else error = msg
@@ -76,6 +91,7 @@ fun LoginScreen(authVm: AuthViewModel, onGuest: () -> Unit, onSignedIn: () -> Un
                 )
             ) {
                 Text("Iniciar sesión")
+                // Muestra un indicador de carga si la autenticación está en progreso
                 if (loading) {
                     Spacer(Modifier.width(8.dp))
                     CircularProgressIndicator(
@@ -88,6 +104,7 @@ fun LoginScreen(authVm: AuthViewModel, onGuest: () -> Unit, onSignedIn: () -> Un
 
             Spacer(Modifier.height(8.dp))
 
+            // Botón de Entrar como Invitado
             OutlinedButton(
                 onClick = {
                     authVm.signInAsGuest {
@@ -104,6 +121,7 @@ fun LoginScreen(authVm: AuthViewModel, onGuest: () -> Unit, onSignedIn: () -> Un
                 Text("Entrar como invitado")
             }
 
+            // Muestra el mensaje de error si existe
             error?.let { Text(it, color = MaterialTheme.colorScheme.error) }
         }
     }

@@ -10,6 +10,17 @@ import android.widget.Toast
 import java.io.File
 import java.io.OutputStream
 
+/**
+ * Guarda un [Bitmap] dado en la galería de imágenes del dispositivo Android.
+ *
+ * Utiliza [MediaStore] para almacenar la imagen de forma compatible con diferentes
+ * versiones de Android (incluyendo el almacenamiento scoped a partir de Android Q).
+ * Muestra un [Toast] al usuario con el resultado de la operación.
+ *
+ * @param context El contexto de la aplicación, necesario para acceder a [ContentResolver] y [Toast].
+ * @param bitmap El mapa de bits ([Bitmap]) que se desea guardar.
+ * @param fileName El nombre del archivo con el que se guardará la imagen. Por defecto, incluye un timestamp.
+ */
 fun saveImageToGallery(context: Context, bitmap: Bitmap, fileName: String = "ticket_${System.currentTimeMillis()}.png") {
     val collection = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
         MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
@@ -22,7 +33,9 @@ fun saveImageToGallery(context: Context, bitmap: Bitmap, fileName: String = "tic
         put(MediaStore.Images.Media.MIME_TYPE, "image/png")
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            // Define el subdirectorio dentro de PICTURES (ej: /Pictures/ReadersViewpoint)
             put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES + File.separator + "ReadersViewpoint")
+            // Marca el archivo como pendiente de escritura
             put(MediaStore.Images.Media.IS_PENDING, 1)
         }
     }
@@ -33,10 +46,12 @@ fun saveImageToGallery(context: Context, bitmap: Bitmap, fileName: String = "tic
         try {
             val outputStream: OutputStream? = context.contentResolver.openOutputStream(it)
             outputStream?.use { stream ->
+                // Comprime el bitmap en formato PNG y lo escribe en el stream
                 bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
             }
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                // Finaliza el archivo pendiente para hacerlo visible
                 contentValues.clear()
                 contentValues.put(MediaStore.Images.Media.IS_PENDING, 0)
                 context.contentResolver.update(it, contentValues, null, null)

@@ -1,5 +1,3 @@
-
-
 package com.libreria.app.ui.screens.admin
 
 import androidx.compose.foundation.clickable
@@ -21,6 +19,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+/**
+ * Componente de tarjeta reutilizable para una opción en el panel de administración.
+ *
+ * @param modifier El [Modifier] a aplicar a la tarjeta.
+ * @param icon El [ImageVector] que representa el icono de la opción.
+ * @param title El título de la opción.
+ * @param onClick La acción a ejecutar cuando se hace clic en la tarjeta.
+ */
 @Composable
 fun AdminOptionCard(
     modifier: Modifier,
@@ -64,7 +70,19 @@ fun AdminOptionCard(
     }
 }
 
-
+/**
+ * Pantalla principal del Panel de Administración.
+ *
+ * Muestra una cuadrícula de opciones navegables para la gestión del inventario,
+ * personal, movimientos y ventas.
+ *
+ * @param onGoInventory Callback para navegar a la pantalla de gestión de inventario.
+ * @param onGoEmployees Callback para navegar a la lista de empleados.
+ * @param onGoMovements Callback para navegar al historial de movimientos de inventario.
+ * @param onCreateAccount Callback para navegar a la pantalla de creación de nuevas cuentas de usuario.
+ * @param onGoSalesHistory Callback para navegar al historial de ventas.
+ * @param onGoBack Callback para cerrar la sesión de administrador o volver al login.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AdministrationScreen(
@@ -75,6 +93,7 @@ fun AdministrationScreen(
     onGoSalesHistory: () -> Unit,
     onGoBack: () -> Unit
 ) {
+    // Definición de las opciones del panel con sus iconos y acciones
     val options = listOf(
         Triple(Icons.Filled.Inventory, "Inventario", onGoInventory),
         Triple(Icons.Filled.Group, "Empleados", onGoEmployees),
@@ -126,6 +145,7 @@ fun AdministrationScreen(
                 )
                 Spacer(Modifier.height(16.dp))
 
+                // Distribución de las opciones en una cuadrícula
                 Column(
                     modifier = Modifier.fillMaxWidth()
                 ) {

@@ -15,6 +15,15 @@ import androidx.compose.ui.unit.dp
 import com.libreria.app.R
 import com.libreria.app.vm.AdminViewModel
 
+/**
+ * Pantalla para que un administrador cree una nueva cuenta de usuario (empleado o administrador).
+ *
+ * Permite ingresar email, contraseña, nombre y seleccionar el rol del nuevo usuario.
+ *
+ * @param adminVm El [AdminViewModel] responsable de la lógica de creación de cuentas de usuario.
+ * @param onDone Callback que se invoca después de intentar crear la cuenta (puede cerrar la pantalla).
+ * @param onClose Callback para cerrar la pantalla sin crear la cuenta y regresar.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateAccountScreen(adminVm: AdminViewModel, onDone: () -> Unit, onClose: () -> Unit) {
@@ -77,6 +86,7 @@ fun CreateAccountScreen(adminVm: AdminViewModel, onDone: () -> Unit, onClose: ()
                 )
                 Spacer(Modifier.height(16.dp))
 
+                // Selector de Rol
                 Row {
 
                     Button(
@@ -106,11 +116,13 @@ fun CreateAccountScreen(adminVm: AdminViewModel, onDone: () -> Unit, onClose: ()
                     }
                 }
                 Spacer(Modifier.height(24.dp))
+                // Botón de Creación
                 Button(
                     onClick = {
+                        // Llama a la función de creación de cuenta
                         adminVm.createAccount(email, password, name, role) { ok, msg ->
                         }
-                        onDone()
+                        onDone() // Llama a la acción de finalización
                     },
                     modifier = Modifier.fillMaxWidth(),
                     enabled = email.isNotBlank() && password.isNotBlank() && name.isNotBlank(),

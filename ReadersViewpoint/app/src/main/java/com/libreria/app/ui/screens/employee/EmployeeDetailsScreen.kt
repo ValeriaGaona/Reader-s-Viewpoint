@@ -19,6 +19,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.libreria.app.vm.AdminViewModel
 
+/**
+ * Pantalla para ver los detalles de un empleado específico y realizar acciones administrativas (como eliminar).
+ *
+ * @param employeeId El ID de usuario (UID) del empleado a mostrar.
+ * @param adminVm El [AdminViewModel] para obtener detalles del usuario y realizar la eliminación.
+ * @param onBack Callback para regresar a la lista de empleados.
+ * @param onDelete Callback que se ejecuta al confirmar la eliminación del usuario.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EmployeeDetailsScreen(
@@ -27,6 +35,7 @@ fun EmployeeDetailsScreen(
     onBack: () -> Unit,
     onDelete: (String) -> Unit
 ) {
+    // Recopila los detalles del empleado en tiempo real
     val employeeDetails by adminVm.getUserDetails(employeeId).collectAsState(initial = null)
 
     var showDeleteDialog by remember { mutableStateOf(false) }
@@ -46,6 +55,7 @@ fun EmployeeDetailsScreen(
                     navigationIconContentColor = Color.White
                 ),
                 actions = {
+                    // Muestra el botón de eliminar solo si los detalles del empleado han cargado
                     if (employeeDetails != null) {
                         IconButton(onClick = { showDeleteDialog = true }) {
                             Icon(
@@ -61,6 +71,7 @@ fun EmployeeDetailsScreen(
         containerColor = Color(0xFFF5F5EF)
     )
     { padding ->
+        // Muestra un indicador de carga mientras se obtienen los detalles
         if (employeeDetails == null) {
             Box(
                 modifier = Modifier
@@ -71,6 +82,7 @@ fun EmployeeDetailsScreen(
                 CircularProgressIndicator()
             }
         } else {
+            // Muestra los detalles del empleado
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -100,6 +112,7 @@ fun EmployeeDetailsScreen(
                         )
                         Spacer(Modifier.height(16.dp))
 
+                        // Nombre de usuario
                         Text(
                             employeeDetails!!.displayName.ifBlank { "Nombre No Asignado" },
                             style = MaterialTheme.typography.headlineMedium,
@@ -108,6 +121,7 @@ fun EmployeeDetailsScreen(
                         )
                         Spacer(Modifier.height(8.dp))
 
+                        // Rol (Administrador o Empleado)
                         Text(
                             employeeDetails!!.role.uppercase(),
                             style = MaterialTheme.typography.titleLarge,
@@ -118,6 +132,7 @@ fun EmployeeDetailsScreen(
                         Divider() // Separador
                         Spacer(Modifier.height(16.dp))
 
+                        // Email
                         Text(
                             "Email:",
                             style = MaterialTheme.typography.bodySmall.copy(color = Color.Gray)
@@ -129,6 +144,7 @@ fun EmployeeDetailsScreen(
                         )
                         Spacer(Modifier.height(16.dp))
 
+                        // ID de usuario
                         Text(
                             "ID de Usuario:",
                             style = MaterialTheme.typography.bodySmall.copy(color = Color.Gray)
@@ -143,6 +159,7 @@ fun EmployeeDetailsScreen(
         }
     }
 
+    // Diálogo de confirmación de eliminación
     if (showDeleteDialog && employeeDetails != null) {
         AlertDialog(
             onDismissRequest = { showDeleteDialog = false },
@@ -156,9 +173,9 @@ fun EmployeeDetailsScreen(
             confirmButton = {
                 Button(
                     onClick = {
-                        onDelete(employeeId)
+                        onDelete(employeeId) // Llama al callback para la eliminación
                         showDeleteDialog = false
-                        onBack()
+                        onBack() // Navega hacia atrás
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = Color.Red.copy(alpha = 0.8f))
                 ) {

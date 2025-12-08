@@ -22,6 +22,16 @@ import java.util.Locale
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 
+/**
+ * Pantalla que muestra el historial completo de ventas (tickets) para la administración.
+ *
+ * Permite a los administradores visualizar una lista de tickets y navegar a la vista
+ * detallada de cada uno.
+ *
+ * @param vm El [CatalogViewModel] que proporciona los datos de los tickets.
+ * @param onClose Callback para regresar al [AdministrationScreen] o pantalla anterior.
+ * @param onViewTicketDetails Callback para navegar a la vista de detalles de un ticket, pasando su ID.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SalesHistoryScreen(

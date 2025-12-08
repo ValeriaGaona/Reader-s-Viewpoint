@@ -16,6 +16,16 @@ import com.libreria.app.vm.CatalogViewModel
 import java.text.NumberFormat
 import java.util.Locale
 
+/**
+ * Pantalla que muestra los detalles completos de un libro.
+ *
+ * Permite visualizar el precio, categoría, stock, sinopsis y ofrece controles
+ * para añadir o quitar el libro del carrito.
+ *
+ * @param book El objeto [Libro] cuyos detalles se van a mostrar.
+ * @param vm El [CatalogViewModel] para manipular el carrito.
+ * @param onBack Callback para regresar a la pantalla anterior (Catálogo).
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BookDetailsScreen(book: Libro, vm: CatalogViewModel, onBack: () -> Unit) {
@@ -55,6 +65,7 @@ fun BookDetailsScreen(book: Libro, vm: CatalogViewModel, onBack: () -> Unit) {
                     .padding(16.dp)
             ) {
 
+                // Tarjeta de encabezado (Autor y Precio)
                 Card(
                     modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp),
                     colors = CardDefaults.cardColors(containerColor = Color(0xFFE5E0D8))
@@ -77,6 +88,7 @@ fun BookDetailsScreen(book: Libro, vm: CatalogViewModel, onBack: () -> Unit) {
 
                 Text("Detalles del Libro", style = MaterialTheme.typography.titleMedium, modifier = Modifier.padding(bottom = 8.dp))
 
+                // Tarjeta de detalles (Categoría, Stock, Sinopsis)
                 Card(
                     modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp),
                     colors = CardDefaults.cardColors(containerColor = Color.White)
@@ -94,18 +106,20 @@ fun BookDetailsScreen(book: Libro, vm: CatalogViewModel, onBack: () -> Unit) {
                             style = MaterialTheme.typography.bodyMedium,
                             modifier = Modifier.fillMaxWidth()
                                 .heightIn(max = 200.dp)
-                                .weight(1f, fill = false)
+                                .weight(1f, fill = false) // Permite que el texto ocupe espacio sin forzar scroll si no es necesario
                         )
                     }
                 }
 
                 Spacer(Modifier.height(16.dp))
 
+                // Controles de navegación y carrito
                 Row(
                     modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
+                    // Botón Volver
                     OutlinedButton(
                         onClick = onBack,
                         colors = ButtonDefaults.outlinedButtonColors(
@@ -115,6 +129,7 @@ fun BookDetailsScreen(book: Libro, vm: CatalogViewModel, onBack: () -> Unit) {
                         Text("Volver al Catálogo")
                     }
 
+                    // Controles de cantidad del carrito
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Button(
                             onClick = { vm.removeFromCart(book.id) },
@@ -128,6 +143,7 @@ fun BookDetailsScreen(book: Libro, vm: CatalogViewModel, onBack: () -> Unit) {
 
                         Spacer(Modifier.width(12.dp))
 
+                        // Cantidad actual en carrito
                         Text(
                             text = "$currentQuantity",
                             style = MaterialTheme.typography.titleLarge,

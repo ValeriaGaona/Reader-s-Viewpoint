@@ -27,6 +27,18 @@ import com.libreria.app.utils.rememberCaptureComposable
 import com.libreria.app.utils.saveImageToGallery
 
 
+/**
+ * Pantalla que muestra el ticket de compra finalizado.
+ *
+ * Muestra los detalles de la transacción, el total, un código QR codificado con los datos
+ * de la venta y permite al usuario guardar el ticket como una imagen en la galería.
+ *
+ * @param vm El [CatalogViewModel] para obtener los detalles del ticket.
+ * @param ticketId El ID único del ticket a mostrar.
+ * @param origin Indica si la navegación proviene de "history" (historial) o "checkout" (venta reciente).
+ * @param onGoHome Callback para navegar a la pantalla principal (Catálogo).
+ * @param onNavigateBackToHistory Callback para navegar a la pantalla de historial (si [origin] es "history").
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ReceiptScreen(
@@ -45,6 +57,7 @@ fun ReceiptScreen(
     var ticketCardSize by remember { mutableStateOf(IntSize.Zero) }
     var capturedBitmap by remember { mutableStateOf<Bitmap?>(null) }
 
+    // Genera el código QR una vez que el ticket ha cargado
     LaunchedEffect(ticket) {
         val currentTicket = ticket
         if (ticketId.isNotEmpty() && currentTicket != null) {
@@ -53,16 +66,19 @@ fun ReceiptScreen(
                 "${item.quantity}x${item.title.replace(" ", "_")}"
             }
 
+            // Datos codificados en el QR: ID|Total|Items
             val dataToEncode = "$ticketId|${currentTicket.total}|$itemsString"
 
             qrCodeBitmap = generateQrCodeBitmap(dataToEncode, 256)
         }
     }
 
+    // Hook para capturar el composable Card
     val captureCard = rememberCaptureComposable { imageBitmap ->
         capturedBitmap = imageBitmap.asAndroidBitmap()
     }
 
+    // Guarda la imagen capturada en la galería
     LaunchedEffect(capturedBitmap) {
         capturedBitmap?.let { bitmap ->
             saveImageToGallery(context, bitmap, "Ticket_${ticketId}.png")
@@ -108,6 +124,7 @@ fun ReceiptScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(6.dp)
+                        // Captura el tamaño para el componente de captura de pantalla
                         .onGloballyPositioned { coordinates ->
                             ticketCardSize = coordinates.size
                         },
@@ -134,6 +151,7 @@ fun ReceiptScreen(
                         } else {
                             val currentTicket = ticket!!
 
+                            // Lista de artículos vendidos
                             currentTicket.items.forEach { item ->
                                 Row(Modifier.fillMaxWidth(), Arrangement.SpaceBetween) {
                                     Text(
@@ -149,6 +167,7 @@ fun ReceiptScreen(
 
                             HorizontalDivider(Modifier.padding(vertical = 12.dp))
 
+                            // Total final
                             Text("TOTAL", fontSize = 20.sp, fontWeight = FontWeight.Bold)
                             Text(
                                 currencyFormat.format(currentTicket.total),
@@ -158,6 +177,7 @@ fun ReceiptScreen(
 
                             Spacer(Modifier.height(24.dp))
 
+                            // Código QR
                             qrCodeBitmap?.let { bitmap ->
                                 Image(
                                     bitmap = bitmap,
@@ -168,6 +188,7 @@ fun ReceiptScreen(
 
                             Spacer(Modifier.height(16.dp))
 
+                            // Metadata del ticket
                             Text(
                                 "ID de Transacción: $ticketId",
                                 style = MaterialTheme.typography.bodySmall
@@ -182,8 +203,10 @@ fun ReceiptScreen(
 
                 Spacer(Modifier.height(32.dp))
 
+                // Botón para descargar el ticket
                 Button(
                     onClick = {
+                        // Captura la vista y la guarda al completarse
                         captureCard(localView, ticketCardSize)
                     },
                     modifier = Modifier.fillMaxWidth().height(50.dp),
@@ -197,6 +220,7 @@ fun ReceiptScreen(
 
                 Spacer(Modifier.height(8.dp))
 
+                // Botón de navegación
                 Button(
                     onClick = navigationAction,
                     modifier = Modifier.fillMaxWidth(),
