@@ -6,6 +6,7 @@
 |                   | Pruebas con usuarios             | Encuesta a 10 usuarios + fotos + PDF con análisis                            | [Ver PDF](https://github.com/ValeriaGaona/Reader-s-Viewpoint/blob/main/GarciaGaonaValeriaGTID141-LaraCarrilloSusanaDafenGTID143-Pruebas-U4.pdf) |
 | **SER (1 pt)**    |  Coevaluación Y Autoevaluación  | PDF de autoevaluacion y coevaluacion Susana Dafne Lara Carrillo                         | [Ver PDF](https://github.com/ValeriaGaona/Reader-s-Viewpoint/blob/main/INSTRUMENTO_DE_AUTOEVALUACI%C3%93N%5B1%5D.pdf)      |
 | **SER**    |  Coevaluación Y Autoevaluación  | PDF de autoevaluacion y coevaluacion Valeria García Gaona                        | [Ver PDF](https://github.com/ValeriaGaona/Reader-s-Viewpoint/blob/main/INSTRUMENTO_DE_AUTOEVALUACI%C3%93N.pdf)      |
+|     |  Pagina Web  |  Pagina web para descargar apk                      | [Ver Pagina Web](https://valeriagaona.github.io/ReadersViewpoint.github.io/)      |
 
 
 
