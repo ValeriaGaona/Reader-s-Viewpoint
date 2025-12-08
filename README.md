@@ -13,7 +13,7 @@
 
 
 
-# 📚 Sistema de Gestión de Librería "Libreria App"
+# 📚 Sistema de Gestión de Librería "Reader's Viewpoint"
 
 El Sistema de Gestión de Librería es una aplicación móvil **Android nativa** diseñada para digitalizar y optimizar la administración de inventario, ventas y personal. Su objetivo es sustituir los procesos manuales de registro de libros y transacciones por un sistema centralizado y digital que permite a la administración y a los empleados llevar un **control preciso del catálogo**, gestionar las ventas (tickets), rastrear los movimientos de inventario y facilitar la gestión del equipo de trabajo.
 
