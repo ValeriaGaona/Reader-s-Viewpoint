@@ -3,7 +3,7 @@
 | **SABER (4 pts)** | Tabla comparativa de plataformas | Comparación Play Store, App Store, App Gallery + referencias                 | [Ver PDF]()            |
 | **HACER (5 pts)** | README con código documentado    | README completo, código con KDoc/JSDoc, carpeta docs/screenshots, .gitignore | [Ver Códigos](https://github.com/ValeriaGaona/Reader-s-Viewpoint/tree/main/ReadersViewpoint/app/src/main/java/com/libreria/app)             |
 |                   | Pruebas con usuarios             | Encuesta a 10 usuarios + fotos + PDF con análisis                            | [Ver PDF](https://github.com/ValeriaGaona/Reader-s-Viewpoint/blob/main/GarciaGaonaValeriaGTID141-LaraCarrilloSusanaDafenGTID143-Pruebas-U4.pdf) |
-| **SER (1 pt)**    |  Coevaluación Y Autoevaluación  | PDF de autoevaluacion y coevaluacion Susana Dafne Lara Carrillo                         | [Ver PDF]()      |
+| **SER (1 pt)**    |  Coevaluación Y Autoevaluación  | PDF de autoevaluacion y coevaluacion Susana Dafne Lara Carrillo                         | [Ver PDF](https://github.com/ValeriaGaona/Reader-s-Viewpoint/blob/main/INSTRUMENTO_DE_AUTOEVALUACI%C3%93N%5B1%5D.pdf)      |
 | **SER (1 pt)**    |  Coevaluación Y Autoevaluación  | PDF de autoevaluacion y coevaluacion Valeria García Gaona                        | [Ver PDF](https://github.com/ValeriaGaona/Reader-s-Viewpoint/blob/main/INSTRUMENTO_DE_AUTOEVALUACI%C3%93N.pdf)      |
 
 
